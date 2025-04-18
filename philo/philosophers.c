@@ -1,14 +1,14 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philosopher.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/14 18:22:30 by aaycan            #+#    #+#             */
-/*   Updated: 2025/04/14 18:22:30 by aaycan           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+/* ************************************************************************************** */
+/*                                                                                        */
+/*                                                                   :::      ::::::::    */
+/*   philosophers.c                                                :+:      :+:    :+:    */
+/*                                                               +:+ +:+         +:+      */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
+/*                                                           +#+#+#+#+#+   +#+            */
+/*   Created: 2025/04/18 16:27:55 by aaycan                       #+#    #+#              */
+/*   Updated: 2025/04/18 16:27:55 by aaycan                      ###   ########.tr        */
+/*                                                                                        */
+/* ************************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
@@ -19,21 +19,21 @@ int main(int argc, char **argv)
 {
 	t_philo			*philosophers;
 	long long		error_code;
+	size_t			philo_count;
 
-	if (check_arguments(argc, argv) != 0)
+	philo_count = ft_atoi_mod(argv[1]);
+	if ((check_arguments(argc, argv) != 0))
 		return (1);
-	philosophers = malloc(sizeof(t_philo));
+	philosophers = malloc(sizeof(t_philo) * philo_count);
 	if (!philosophers)
 	{
 		write(2, "Malloc Error\n", 13);
 		return (1);
 	}
-	if (init_philosophers(philosophers, argv) != 0)
+	init_philosophers(philosophers, argv, philo_count, argc);
+	error_code = init_process(philosophers, philo_count);
+	if (fail_free(philosophers, philo_count, error_code) != 0)
 		return (1);
-	error_code = init_process(philosophers);
-	printf("%d\n",philosophers->test_counter);
-	//if (fail_free(philosophers, error_code) != 0)
-	//	return (1);
-	//free_philosophers(philosophers);
+	free_philosophers(philosophers, philo_count);
 	return (0);
 }

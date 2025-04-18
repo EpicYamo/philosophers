@@ -1,55 +1,75 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   thread_and_routine.c                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aaycan < aaycan@student.42kocaeli.com.t    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/15 19:51:10 by aaycan            #+#    #+#             */
-/*   Updated: 2025/04/15 19:51:10 by aaycan           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+/* ************************************************************************************** */
+/*                                                                                        */
+/*                                                                   :::      ::::::::    */
+/*   thread_and_routine.c                                          :+:      :+:    :+:    */
+/*                                                               +:+ +:+         +:+      */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
+/*                                                           +#+#+#+#+#+   +#+            */
+/*   Created: 2025/04/18 16:27:21 by aaycan                       #+#    #+#              */
+/*   Updated: 2025/04/18 16:27:21 by aaycan                      ###   ########.tr        */
+/*                                                                                        */
+/* ************************************************************************************** */
 
 #include "philosophers.h"
 #include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
 
-static void	*philo_routine(void *philosophers);
+static long long	init_mutex_func(t_philo *philosophers, int philo_count);
+static void			*philo_routine(void *philosopherso);
 
-long long	init_process(t_philo *philosophers)
+long long	init_process(t_philo *philosophers, int philo_count)
 {
-	pthread_t		th[philosophers->num_of_philo];
-	int				i;
+	int	i;
 
-	if (pthread_mutex_init(&philosophers->mutex, NULL) != 0)
+	if (init_mutex_func(philosophers, philo_count) != 0)
 		return (LONG_LONG_MAX);
 	i = 0;
-	while (i < philosophers->num_of_philo)
+	while (i < philo_count)
 	{
-		if (pthread_create(&th[i], NULL, &philo_routine, &philosophers) != 0)
+		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine, &philosophers[i]) != 0)
 			return (i);
 		i++;
 	}
 	i = 0;
-	while (i < philosophers->num_of_philo)
+	while (i < philo_count)
 	{
-		if (pthread_join(th[i], NULL) != 0)
+		if (pthread_join(philosophers[i].philo_thread, NULL) != 0)
 			return (i *= -1);
 		i++;
 	}
-	pthread_mutex_destroy(&philosophers->mutex);
+	mutex_destroy_func(philosophers, philo_count);
 	return (LONG_LONG_MAX - 1);
 }
 
-static void	*philo_routine(void *philosophers)
+static long long	init_mutex_func(t_philo *philosophers, int philo_count)
 {
-	//t_philo *philosophers = philosopherso;
 	int	i;
 
 	i = 0;
-	while(i < 100000)
+	while (i < philo_count)
 	{
-		pthread_mutex_lock(&philosophers->mutex);
-		philosophers->test_counter += 1;
-		pthread_mutex_unlock(&philosophers->mutex);
+		if (pthread_mutex_init(&philosophers[i].mutex_fork, NULL) != 0)
+		{
+			mutex_destroy_func(philosophers, i - 1);
+			return (LONG_LONG_MAX);
+		}
+		i++;
+	}
+	return (0);
+}
+
+static void	*philo_routine(void *philosopherso)
+{
+	t_philo *philosophers = philosopherso;
+	if (philosophers->num_of_philo == 1)
+	{
+		usleep(philosophers->to_die);
+		philosophers->dead_flag = 1;
+		printf("%d %d died\n", philosophers->philo_id, philosophers->to_die);
+	}
+	else
+	{
+		
 	}
 }

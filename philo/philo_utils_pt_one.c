@@ -1,33 +1,34 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philosophers_utils_pt_one.c                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: aaycan < aaycan@student.42kocaeli.com.t    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/15 21:21:31 by aaycan            #+#    #+#             */
-/*   Updated: 2025/04/15 21:21:31 by aaycan           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+/* ************************************************************************************** */
+/*                                                                                        */
+/*                                                                   :::      ::::::::    */
+/*   philo_utils_pt_one.c                                          :+:      :+:    :+:    */
+/*                                                               +:+ +:+         +:+      */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
+/*                                                           +#+#+#+#+#+   +#+            */
+/*   Created: 2025/04/18 16:28:04 by aaycan                       #+#    #+#              */
+/*   Updated: 2025/04/18 16:28:04 by aaycan                      ###   ########.tr        */
+/*                                                                                        */
+/* ************************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
-static int	init_allocation(t_philo *philosophers);
+static void	error_message_func(int option, int *flag);
+static void	arrange_around_the_table(t_philo *philosophers, int philo_count);
 
 int	check_arguments(int argc, char **argv)
 {
 	int	i;
 	int j;
+	int	error;
 
-	if (argc != 6)
-	{
-		write(2, "Error\nArguments should look like:\n", 34);
-		write(2, "number_of_philosophers time_to_die time_to_eat time_to_sleep", 60);
-		write(2, " number_of_times_each_philosopher_must_eat\n", 43);
-		return (1);
-	}
+	error = 0;
+	if (argc > 6 || argc < 5)
+		error_message_func(0, &error);
+	if (ft_atoi_mod(argv[1]) < 1)
+		error_message_func(1, &error);
 	i = 0;
 	while (argv[++i])
 	{
@@ -36,68 +37,73 @@ int	check_arguments(int argc, char **argv)
 		{
 			if (((argv[i][j] < '0') && (argv[i][j] != '+'))
 				|| ((argv[i][j] > '9') && (argv[i][j] != '+')))
-			{
-				write(2, "All arguments must only contain positive numbers.\n", 50);
-				return (1);
-			}
+				error_message_func(2, &error);
 		}
 	}
+	if (error != 0)
+		return (1);
 	return (0);
 }
 
-int	init_philosophers(t_philo *philosophers, char **argv)
+static void	error_message_func(int option, int *flag)
+{
+	if (option == 0)
+	{
+		write(2, "Error\nArguments should look like:\n", 34);
+		write(2, "number_of_philosophers time_to_die time_to_eat time_to_sleep", 60);
+		write(2, " (optional)number_of_times_each_philosopher_must_eat\n", 53);
+	}
+	if (option == 1)
+	{
+		write(2, "Error\nFirst Argument Which is", 29);
+		write(2, " the <Philosopher Count> Should be above 0\n", 43);
+	}
+	if (option == 2)
+	{
+		write(2, "Error\nAll arguments must only contain positive numbers.\n", 56);
+	}
+	*flag = 1;
+}
+
+void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc)
 {
 	int i;
 
-	philosophers->num_of_philo = ft_atoi_mod(argv[1]);
-	philosophers->to_die = ft_atoi_mod(argv[2]);
-	philosophers->to_eat = ft_atoi_mod(argv[3]);
-	philosophers->to_sleep = ft_atoi_mod(argv[4]);
-	philosophers->eat_count = ft_atoi_mod(argv[5]);
-	philosophers->test_counter = 0;
-	if (init_allocation(philosophers) != 0)
+	i = 0;
+	while (i < philo_count)
 	{
-		write(2, "Malloc Error\n", 13);
-		return (1);
+		philosophers[i].philo_id = i + 1;
+		philosophers[i].eating_flag = 0;
+		philosophers[i].sleeping_flag = 0;
+		philosophers[i].thinking_flag = 0;
+		philosophers[i].left_fork = 1;
+		philosophers[i].right_fork = 0;
+		philosophers[i].wait_time = 0;
+		philosophers[i].dead_flag = 0;
+		philosophers[i].num_of_philo = philo_count;
+		philosophers[i].to_die = ft_atoi_mod(argv[2]);
+		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
+		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);
+		if (argc == 6)
+			philosophers[i].eat_count = ft_atoi_mod(argv[5]);
+		else
+			philosophers[i].eat_count = 0;
+		i++;
 	}
-	i = philosophers->num_of_philo;
-	while (i)
-	{
-		
-		philosophers->philo_id[i - 1] = i;
-		philosophers->dead[i - 1] = 0;
-		philosophers->time_left[i - 1] = philosophers->to_die;
-		philosophers->wait_time[i - 1] = 0;
-		i--;
-	}
-	return (0);
+	arrange_around_the_table(philosophers, philo_count);
 }
 
-static int	init_allocation(t_philo *philosophers)
+static void	arrange_around_the_table(t_philo *philosophers, int philo_count)
 {
-	philosophers->philo_id = malloc(sizeof(int) * philosophers->num_of_philo);
-	if (!philosophers->philo_id)
-		return (1);
-	philosophers->dead = malloc(sizeof(int) * philosophers->num_of_philo);
-	if (!philosophers->dead)
+	int	i;
+
+	i = 0;
+	if (philo_count != 1)
 	{
-		free(philosophers->philo_id);
-		return (1);
+		while (i < philo_count)
+		{
+			philosophers[i].right_fork = 1;
+			i++;
+		}
 	}
-	philosophers->time_left = malloc(sizeof(int) * philosophers->num_of_philo);
-	if (!philosophers->time_left)
-	{
-		free(philosophers->philo_id);
-		free(philosophers->dead);
-		return (1);
-	}
-	philosophers->wait_time = malloc(sizeof(int) * philosophers->num_of_philo);
-	if (!philosophers->wait_time)
-	{
-		free(philosophers->philo_id);
-		free(philosophers->dead);
-		free(philosophers->time_left);
-		return (1);
-	}
-	return (0);
 }
