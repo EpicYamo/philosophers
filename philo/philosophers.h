@@ -23,7 +23,7 @@ typedef struct s_philosopher
 	int				sleeping_flag;
 	int				thinking_flag;
 	int				left_fork;
-	int				right_fork;
+	int				*right_fork;
 	size_t			wait_time;
 	int				dead_flag;
 	pthread_mutex_t	mutex_fork;

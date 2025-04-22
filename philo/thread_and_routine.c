@@ -62,14 +62,11 @@ static long long	init_mutex_func(t_philo *philosophers, int philo_count)
 static void	*philo_routine(void *philosopherso)
 {
 	t_philo *philosophers = philosopherso;
-	if (philosophers->num_of_philo == 1)
+	while (philosophers->dead_flag == 0)
 	{
-		usleep(philosophers->to_die);
-		philosophers->dead_flag = 1;
-		printf("%d %d died\n", philosophers->philo_id, philosophers->to_die);
-	}
-	else
-	{
-		
+		if (waitress_function(philosophers))
+		{
+																
+		}
 	}
 }
