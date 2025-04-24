@@ -15,6 +15,7 @@
 
 #include <pthread.h>
 #include <stddef.h>
+#include <sys/time.h>
 
 typedef struct s_philosopher
 {
@@ -24,7 +25,9 @@ typedef struct s_philosopher
 	int				thinking_flag;
 	int				left_fork;
 	int				*right_fork;
+	int				*sim_flag;
 	size_t			wait_time;
+	struct timeval	current_time;
 	int				dead_flag;
 	pthread_mutex_t	mutex_fork;
 	pthread_t		philo_thread;
@@ -38,7 +41,7 @@ typedef struct s_philosopher
 int			ft_atoi_mod(const char *str);
 int			check_arguments(int argc, char **argv);
 void		init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
-long long	init_process(t_philo *philosophers, int philo_count);
+long long	init_simulation(t_philo *philosophers, int philo_count);
 int			fail_free(t_philo *philosophers, int philo_count, long long error_code);
 void		mutex_destroy_func(t_philo *philosophers, int mutex_count);
 void		free_philosophers(t_philo *philosophers, int philo_count);

@@ -27,11 +27,11 @@ int main(int argc, char **argv)
 	philosophers = malloc(sizeof(t_philo) * philo_count);
 	if (!philosophers)
 	{
-		write(2, "Malloc Error\n", 13);
+		write(2, "Error\nMalloc Error\n", 19);
 		return (1);
 	}
 	init_philosophers(philosophers, argv, philo_count, argc);
-	error_code = init_process(philosophers, philo_count);
+	error_code = init_simulation(philosophers, philo_count);
 	if (fail_free(philosophers, philo_count, error_code) != 0)
 		return (1);
 	free_philosophers(philosophers, philo_count);

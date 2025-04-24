@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 static void	error_message_func(int option, int *flag);
-static void	arrange_around_the_table(t_philo *philosophers, int philo_count);
+static void	init_philosophers_pt_two(t_philo *philosophers, int philo_count);
 
 int	check_arguments(int argc, char **argv)
 {
@@ -77,32 +77,33 @@ void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int 
 		philosophers[i].sleeping_flag = 0;
 		philosophers[i].thinking_flag = 0;
 		philosophers[i].left_fork = 1;
-		philosophers[i].right_fork = 0;
 		philosophers[i].wait_time = 0;
 		philosophers[i].dead_flag = 0;
 		philosophers[i].num_of_philo = philo_count;
+		gettimeofday(&philosophers[i].current_time, NULL);
 		philosophers[i].to_die = ft_atoi_mod(argv[2]);
 		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
 		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);
 		if (argc == 6)
 			philosophers[i].eat_count = ft_atoi_mod(argv[5]);
 		else
-			philosophers[i].eat_count = 0;
+			philosophers[i].eat_count = -1;
 		i++;
 	}
-	arrange_around_the_table(philosophers, philo_count);
+	init_philosophers_pt_two(philosophers, philo_count);
 }
 
-static void	arrange_around_the_table(t_philo *philosophers, int philo_count)
+static void	init_philosophers_pt_two(t_philo *philosophers, int philo_count)
 {
 	int	i;
 
-	i = 0;
+	i = 1;
 	if (philo_count != 1)
 	{
+		philosophers[0].right_fork = &(philosophers[philo_count - 1].left_fork);
 		while (i < philo_count)
 		{
-			philosophers[i].right_fork = 1;
+			philosophers[i].right_fork = &(philosophers[i - 1].left_fork);
 			i++;
 		}
 	}
