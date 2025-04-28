@@ -19,9 +19,8 @@
 #include <sys/time.h>
 
 static int	init_sim_flag(t_philo *philosophers, int philo_count);
-static int	init_mutex_func(t_philo *philosophers, int philo_count);
-static void	*philo_routine(void *philosopherso);
-static void	alone_philosopher(t_philo *philosopher);
+static int	init_fork_mutex(t_philo *philosophers, int philo_count);
+static int	init_print_mutex(t_philo *philosophers, int philo_count);
 
 long long	init_simulation(t_philo *philosophers, int philo_count)
 {
@@ -29,8 +28,10 @@ long long	init_simulation(t_philo *philosophers, int philo_count)
 
 	if (init_sim_flag(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 1);
-	if (init_mutex_func(philosophers, philo_count) != 0)
+	if (init_fork_mutex(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 2);
+	if (init_print_mutex(philosophers, philo_count) != 0)
+		return (LLONG_MAX - 3);
 	i = 0;
 	while (i < philo_count)
 	{
@@ -45,7 +46,6 @@ long long	init_simulation(t_philo *philosophers, int philo_count)
 			return (i *= -1);
 		i++;
 	}
-	mutex_destroy_func(philosophers, philo_count);
 	return (LLONG_MAX);
 }
 
@@ -67,57 +67,53 @@ static int	init_sim_flag(t_philo *philosophers, int philo_count)
 	return (0);
 }
 
-static int	init_mutex_func(t_philo *philosophers, int philo_count)
+static int	init_fork_mutex(t_philo *philosophers, int philo_count)
 {
 	int	i;
 
 	i = 0;
 	while (i < philo_count)
 	{
-		if (pthread_mutex_init(&philosophers[i].mutex_fork, NULL) != 0)
+		if (pthread_mutex_init(&philosophers[i].mutex_fork_left, NULL) != 0)
 		{
-			mutex_destroy_func(philosophers, i - 1);
+			mutex_destroy_func(philosophers, i - 1, 0);
 			return (1);
 		}
 		i++;
 	}
+	if (philosophers->num_of_philo == 1)
+		philosophers[0].mutex_fork_right = NULL;
+	else
+	{
+		i = 1;
+		philosophers[0].mutex_fork_right = &(philosophers[philo_count - 1].mutex_fork_left);
+		while (i < philo_count)
+		{
+			philosophers[i].mutex_fork_right = &(philosophers[i - 1].mutex_fork_left);
+			i++;
+		}
+	}
 	return (0);
 }
 
-static void	*philo_routine(void *philosopherso)
+static int	init_print_mutex(t_philo *philosophers, int philo_count)
 {
-	t_philo *philosophers;
+	int				i;
+	pthread_mutex_t	*print_mutex;
 
-	philosophers = philosopherso;
-	if (philosophers->num_of_philo == 1)
-		alone_philosopher(philosophers);
-	if (philosophers->eat_count == -1)
+	print_mutex = malloc(sizeof(pthread_mutex_t));
+	if (!print_mutex)
+		return (1);
+	if (pthread_mutex_init(print_mutex, NULL) != 0)
 	{
-		while (philosophers->dead_flag == 0 && *philosophers->sim_flag == 1)
-		{
-			//mutex lock both forks
-			if (philosophers->right_fork == 1 && philosophers->left_fork == 1);
-			//eat
-			//else; think until you can eat again. while(right_fork == 0 || left_fort == 0){}
-			//sleep right after eating and repeat.
-			//mutex unlock both forks
-		}
+		free(print_mutex);
+		return (1);
 	}
-	else if (philosophers->eat_count != -1)
+	i = 0;
+	while (i < philo_count)
 	{
-		;
+		philosophers[i].print_mutex = print_mutex;
+		i++;
 	}
-	if (philosophers->dead_flag == 1)
-		*philosophers->sim_flag = 0;
-}
-
-static void alone_philosopher(t_philo *philosopher)
-{
-	gettimeofday(&philosopher->current_time, NULL);
-	printf("%ld %d is thinking\n", philosopher->current_time.tv_usec, philosopher->philo_id);
-	usleep(philosopher->to_die * 1000);
-	gettimeofday(&philosopher->current_time, NULL);
-	philosopher->dead_flag = 1;
-	*philosopher->sim_flag = 0;
-	printf("%ld %d died\n", philosopher->current_time.tv_usec, philosopher->philo_id);
+	return (0);
 }

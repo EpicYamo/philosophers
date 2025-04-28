@@ -34,6 +34,6 @@ int main(int argc, char **argv)
 	error_code = init_simulation(philosophers, philo_count);
 	if (fail_free(philosophers, philo_count, error_code) != 0)
 		return (1);
-	free_philosophers(philosophers, philo_count);
+	free_philosophers(philosophers, philo_count, 1);
 	return (0);
 }

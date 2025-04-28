@@ -67,20 +67,18 @@ static void	error_message_func(int option, int *flag)
 
 void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc)
 {
-	int i;
+	int				i;
+	struct timeval	starting_time;
 
 	i = 0;
+	gettimeofday(&starting_time, NULL);
 	while (i < philo_count)
 	{
 		philosophers[i].philo_id = i + 1;
-		philosophers[i].eating_flag = 0;
-		philosophers[i].sleeping_flag = 0;
-		philosophers[i].thinking_flag = 0;
 		philosophers[i].left_fork = 1;
-		philosophers[i].wait_time = 0;
 		philosophers[i].dead_flag = 0;
+		philosophers[i].start_time = starting_time;
 		philosophers[i].num_of_philo = philo_count;
-		gettimeofday(&philosophers[i].current_time, NULL);
 		philosophers[i].to_die = ft_atoi_mod(argv[2]);
 		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
 		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);

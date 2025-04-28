@@ -20,16 +20,14 @@
 typedef struct s_philosopher
 {
 	int				philo_id;
-	int				eating_flag;
-	int				sleeping_flag;
-	int				thinking_flag;
 	int				left_fork;
 	int				*right_fork;
 	int				*sim_flag;
-	size_t			wait_time;
-	struct timeval	current_time;
 	int				dead_flag;
-	pthread_mutex_t	mutex_fork;
+	struct timeval	start_time;
+	pthread_mutex_t	*print_mutex;
+	pthread_mutex_t	mutex_fork_left;
+	pthread_mutex_t	*mutex_fork_right;
 	pthread_t		philo_thread;
 	int				num_of_philo;
 	int				to_die;
@@ -43,7 +41,8 @@ int			check_arguments(int argc, char **argv);
 void		init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 long long	init_simulation(t_philo *philosophers, int philo_count);
 int			fail_free(t_philo *philosophers, int philo_count, long long error_code);
-void		mutex_destroy_func(t_philo *philosophers, int mutex_count);
-void		free_philosophers(t_philo *philosophers, int philo_count);
+void		mutex_destroy_func(t_philo *philosophers, int mutex_count, int option);
+void		free_philosophers(t_philo *philosophers, int philo_count, int option);
+void		*philo_routine(void *philosopher);
 
 #endif

@@ -15,6 +15,8 @@
 #include <limits.h>
 #include <unistd.h>
 
+static void	fail_free_pt_two(t_philo *philosophers, int philo_count, long long error_code);
+
 int	ft_atoi_mod(const char *str)
 {
 	int	i;
@@ -32,15 +34,23 @@ int	ft_atoi_mod(const char *str)
 	return (strg);
 }
 
-void mutex_destroy_func(t_philo *philosophers, int mutex_count)
+void mutex_destroy_func(t_philo *philosophers, int mutex_count, int option)
 {
 	int	i;
 
 	i = 0;
 	while (i < mutex_count)
 	{
-		pthread_mutex_destroy(&philosophers[i].mutex_fork);
+		pthread_mutex_destroy(&philosophers[i].mutex_fork_left);
 		i++;
+	}
+	if (option == 1)
+	{
+		if (philosophers[0].print_mutex)
+		{
+			pthread_mutex_destroy(philosophers[0].print_mutex);
+			free(philosophers[0].print_mutex);
+		}
 	}
 }
 
@@ -50,31 +60,41 @@ int	fail_free(t_philo *philosophers, int philo_count, long long error_code)
 		return (0);
 	else if (error_code == LLONG_MAX - 1)
 	{
-		write(2, "Error\nMalloc Error\n", 19);
 		free(philosophers);
+		write(2, "Error\nMalloc Error\n", 19);
 	}
 	else if (error_code == LLONG_MAX - 2)
 	{
-		write(2, "Error\nMutex Init Failed\n", 24);
 		free(philosophers->sim_flag);
 		free(philosophers);
+		write(2, "Error\nMutex Init Failed\n", 24);
 	}
-	else if (error_code > 0)
+	else if (error_code == LLONG_MAX - 3)
 	{
-		free_philosophers(philosophers, philo_count);
+		free_philosophers(philosophers, philo_count, 0);
+		write(2, "Error\nMutex Init Failed\n", 24);
+	}
+	fail_free_pt_two(philosophers, philo_count, error_code);
+	return (1);
+}
+
+static void	fail_free_pt_two(t_philo *philosophers, int philo_count, long long error_code)
+{
+	if (error_code > 0)
+	{
+		free_philosophers(philosophers, philo_count, 0);
 		write(2, "Error\nThread Creation Error\n", 28);
 	}
 	else if (error_code < 0)
 	{
-		free_philosophers(philosophers, philo_count);
+		free_philosophers(philosophers, philo_count, 0);
 		write(2, "Error\nThread Join Error\n", 24);
 	}
-	return (1);
 }
 
-void	free_philosophers(t_philo *philosophers, int philo_count)
+void	free_philosophers(t_philo *philosophers, int philo_count, int option)
 {
-	mutex_destroy_func(philosophers, philo_count);
+	mutex_destroy_func(philosophers, philo_count, option);
 	free(philosophers->sim_flag);
 	free(philosophers);
 }
