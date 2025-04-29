@@ -13,9 +13,9 @@
 #ifndef PHILOSOPHERS_H
 # define PHILOSOPHERS_H
 
-#include <pthread.h>
-#include <stddef.h>
-#include <sys/time.h>
+# include <pthread.h>
+# include <stddef.h>
+# include <sys/time.h>
 
 typedef struct s_philosopher
 {
@@ -23,8 +23,10 @@ typedef struct s_philosopher
 	int				left_fork;
 	int				*right_fork;
 	int				*sim_flag;
-	int				dead_flag;
+	long long		last_meal_time;
 	struct timeval	start_time;
+	int				current_meals;
+	int				done_eating;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	mutex_fork_left;
 	pthread_mutex_t	*mutex_fork_right;
@@ -33,16 +35,22 @@ typedef struct s_philosopher
 	int				to_die;
 	int				to_eat;
 	int				to_sleep;
-	int				eat_count;
+	int				required_meals;
 }t_philo;
 
 int			ft_atoi_mod(const char *str);
 int			check_arguments(int argc, char **argv);
-void		init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 long long	init_simulation(t_philo *philosophers, int philo_count);
+int			init_sim_flag(t_philo *philosophers, int philo_count);
+int			init_fork_mutex(t_philo *philosophers, int philo_count);
+int			init_print_mutex(t_philo *philosophers, int philo_count);
 int			fail_free(t_philo *philosophers, int philo_count, long long error_code);
 void		mutex_destroy_func(t_philo *philosophers, int mutex_count, int option);
 void		free_philosophers(t_philo *philosophers, int philo_count, int option);
 void		*philo_routine(void *philosopher);
+void		*monitor(void *philosophers);
+long long	get_timestamp_in_ms(struct timeval start_time);
+void		print_message(t_philo *philo, char *message);
+void		smart_sleep(long long time_in_ms, t_philo *philo);
 
 #endif

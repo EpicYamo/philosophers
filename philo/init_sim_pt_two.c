@@ -1,12 +1,12 @@
 /* ************************************************************************************** */
 /*                                                                                        */
 /*                                                                   :::      ::::::::    */
-/*   simulation_pt_one.c                                           :+:      :+:    :+:    */
+/*   init_sim_pt_two.c                                             :+:      :+:    :+:    */
 /*                                                               +:+ +:+         +:+      */
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
 /*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/24 00:13:53 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/24 00:13:53 by aaycan                      ###   ########.tr        */
+/*   Created: 2025/04/29 21:25:07 by aaycan                       #+#    #+#              */
+/*   Updated: 2025/04/29 21:25:07 by aaycan                      ###   ########.tr        */
 /*                                                                                        */
 /* ************************************************************************************** */
 
@@ -18,38 +18,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-static int	init_sim_flag(t_philo *philosophers, int philo_count);
-static int	init_fork_mutex(t_philo *philosophers, int philo_count);
-static int	init_print_mutex(t_philo *philosophers, int philo_count);
-
-long long	init_simulation(t_philo *philosophers, int philo_count)
-{
-	int	i;
-
-	if (init_sim_flag(philosophers, philo_count) != 0)
-		return (LLONG_MAX - 1);
-	if (init_fork_mutex(philosophers, philo_count) != 0)
-		return (LLONG_MAX - 2);
-	if (init_print_mutex(philosophers, philo_count) != 0)
-		return (LLONG_MAX - 3);
-	i = 0;
-	while (i < philo_count)
-	{
-		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine, &philosophers[i]) != 0)
-			return (i);
-		i++;
-	}
-	i = 0;
-	while (i < philo_count)
-	{
-		if (pthread_join(philosophers[i].philo_thread, NULL) != 0)
-			return (i *= -1);
-		i++;
-	}
-	return (LLONG_MAX);
-}
-
-static int	init_sim_flag(t_philo *philosophers, int philo_count)
+int	init_sim_flag(t_philo *philosophers, int philo_count)
 {
 	int	i;
 	int	*simulation_flag;
@@ -67,7 +36,7 @@ static int	init_sim_flag(t_philo *philosophers, int philo_count)
 	return (0);
 }
 
-static int	init_fork_mutex(t_philo *philosophers, int philo_count)
+int	init_fork_mutex(t_philo *philosophers, int philo_count)
 {
 	int	i;
 
@@ -96,7 +65,7 @@ static int	init_fork_mutex(t_philo *philosophers, int philo_count)
 	return (0);
 }
 
-static int	init_print_mutex(t_philo *philosophers, int philo_count)
+int	init_print_mutex(t_philo *philosophers, int philo_count)
 {
 	int				i;
 	pthread_mutex_t	*print_mutex;
