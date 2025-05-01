@@ -15,7 +15,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static void	error_message_func(int option, int *flag);
+static void	error_message_func(int option, int *error_flag);
+static int	check_arguments_pt_two(int argc, char **argv, int *error_flag);
 
 int	check_arguments(int argc, char **argv)
 {
@@ -26,8 +27,6 @@ int	check_arguments(int argc, char **argv)
 	error = 0;
 	if (argc > 6 || argc < 5)
 		error_message_func(0, &error);
-	if (ft_atoi_mod(argv[1]) < 1)
-		error_message_func(1, &error);
 	i = 0;
 	while (argv[++i])
 	{
@@ -36,15 +35,38 @@ int	check_arguments(int argc, char **argv)
 		{
 			if (((argv[i][j] < '0') && (argv[i][j] != '+'))
 				|| ((argv[i][j] > '9') && (argv[i][j] != '+')))
-				error_message_func(2, &error);
+				error_message_func(1, &error);
 		}
 	}
+	check_arguments_pt_two(argc, argv, &error);
 	if (error != 0)
 		return (1);
 	return (0);
 }
 
-static void	error_message_func(int option, int *flag)
+static int	check_arguments_pt_two(int argc, char **argv, int *error_flag)
+{
+	int	error;
+
+	error = 0;
+	if (ft_atoi_mod(argv[1]) <= 0)
+		error = 1;
+	if (ft_atoi_mod(argv[2]) <= 0)
+		error = 1;
+	if (ft_atoi_mod(argv[3]) <= 0)
+		error = 1;
+	if (ft_atoi_mod(argv[4]) <= 0)
+		error = 1;
+	if (argc == 6)
+	{
+		if (ft_atoi_mod(argv[5]) <= 0)
+			error = 1;
+	}
+	if (error == 1)
+		error_message_func(1, error_flag);
+}
+
+static void	error_message_func(int option, int *error_flag)
 {
 	if (option == 0)
 	{
@@ -53,13 +75,6 @@ static void	error_message_func(int option, int *flag)
 		write(2, " (optional)number_of_times_each_philosopher_must_eat\n", 53);
 	}
 	if (option == 1)
-	{
-		write(2, "Error\nFirst Argument Which is", 29);
-		write(2, " the <Philosopher Count> Should be above 0\n", 43);
-	}
-	if (option == 2)
-	{
 		write(2, "Error\nAll arguments must only contain positive numbers.\n", 56);
-	}
-	*flag = 1;
+	*error_flag = 1;
 }
