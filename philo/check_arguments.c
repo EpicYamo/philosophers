@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 static void	error_message_func(int option, int *error_flag);
-static int	check_arguments_pt_two(int argc, char **argv, int *error_flag);
+static void	check_arguments_pt_two(int argc, char **argv, int *error_flag);
 
 int	check_arguments(int argc, char **argv)
 {
@@ -44,7 +44,7 @@ int	check_arguments(int argc, char **argv)
 	return (0);
 }
 
-static int	check_arguments_pt_two(int argc, char **argv, int *error_flag)
+static void	check_arguments_pt_two(int argc, char **argv, int *error_flag)
 {
 	int	error;
 
