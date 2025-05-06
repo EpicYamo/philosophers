@@ -32,10 +32,10 @@ void	*philo_routine(void *philosopher)
 	{
 		while (*(philo->sim_flag) == 1)
 		{
+			print_message(philo, "is thinking");
 			eat_philosopher(philo);
 			print_message(philo, "is sleeping");
 			smart_sleep(philo->to_sleep, philo);
-			print_message(philo, "is thinking");
 			usleep(100);
 		}
 	}
