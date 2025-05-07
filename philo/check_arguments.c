@@ -25,16 +25,17 @@ int	check_arguments(int argc, char **argv)
 	int	error;
 
 	error = 0;
-	if (argc > 6 || argc < 5)
+	if (!(argc == 6 || argc == 5))
 		error_message_func(0, &error);
+	if (error != 0)
+		return (1);
 	i = 0;
 	while (argv[++i])
 	{
 		j = -1;
 		while (argv[i][++j])
 		{
-			if (((argv[i][j] < '0') && (argv[i][j] != '+'))
-				|| ((argv[i][j] > '9') && (argv[i][j] != '+')))
+			if ((argv[i][j] < '0') || (argv[i][j] > '9'))
 				error_message_func(1, &error);
 		}
 	}
@@ -74,7 +75,7 @@ static void	error_message_func(int option, int *error_flag)
 		write(2, "number_of_philosophers time_to_die time_to_eat time_to_sleep", 60);
 		write(2, " (optional)number_of_times_each_philosopher_must_eat\n", 53);
 	}
-	if (option == 1)
-		write(2, "Error\nAll arguments must only contain positive numbers.\n", 56);
+	if ((option == 1) && (*error_flag == 0))
+		write(2, "Error\nAll arguments must only contain positive numbers.(without signs)\n", 71);
 	*error_flag = 1;
 }

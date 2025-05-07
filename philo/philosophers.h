@@ -27,6 +27,7 @@ typedef struct s_philosopher
 	struct timeval	start_time;
 	int				current_meals;
 	int				done_eating;
+	int				allowed_to_eat;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	mutex_fork_left;
 	pthread_mutex_t	*mutex_fork_right;
