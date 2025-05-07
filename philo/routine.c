@@ -34,9 +34,7 @@ void	*philo_routine(void *philosopher)
 		{
 			print_message(philo, "is thinking");
 			while (philo->allowed_to_eat != 0)
-			{
-				pause();
-			}
+				usleep(1000);
 			eat_philosopher(philo);
 			print_message(philo, "is sleeping");
 			smart_sleep(philo->to_sleep, philo);
