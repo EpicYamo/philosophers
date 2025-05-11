@@ -34,26 +34,6 @@ int	ft_atoi_mod(const char *str)
 	return (strg);
 }
 
-void mutex_destroy_func(t_philo *philosophers, int mutex_count, int option)
-{
-	int	i;
-
-	i = 0;
-	while (i < mutex_count)
-	{
-		pthread_mutex_destroy(&philosophers[i].mutex_fork_left);
-		i++;
-	}
-	if (option == 1)
-	{
-		if (philosophers[0].print_mutex)
-		{
-			pthread_mutex_destroy(philosophers[0].print_mutex);
-			free(philosophers[0].print_mutex);
-		}
-	}
-}
-
 int	fail_free(t_philo *philosophers, int philo_count, long long error_code)
 {
 	if (error_code == LLONG_MAX)

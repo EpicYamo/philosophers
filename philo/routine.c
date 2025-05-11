@@ -33,8 +33,9 @@ void	*philo_routine(void *philosopher)
 		while (*(philo->sim_flag) == 1)
 		{
 			print_message(philo, "is thinking");
-			while (philo->allowed_to_eat != 0)
-				usleep(1000);
+			pthread_mutex_lock(&philo->eat_perm_mutex);
+			philo->who_locked_me = 2;
+			pthread_mutex_unlock(&philo->eat_perm_mutex);
 			eat_philosopher(philo);
 			print_message(philo, "is sleeping");
 			smart_sleep(philo->to_sleep, philo);

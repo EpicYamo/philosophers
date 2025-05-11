@@ -57,7 +57,7 @@ static void	init_philosophers(t_philo *philosophers, char **argv, int philo_coun
 		philosophers[i].num_of_philo = philo_count;
 		philosophers[i].current_meals = 0;
 		philosophers[i].done_eating = 0;
-		philosophers[i].allowed_to_eat = 0;
+		philosophers[i].who_locked_me = 0;
 		philosophers[i].to_die = ft_atoi_mod(argv[2]);
 		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
 		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);

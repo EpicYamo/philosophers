@@ -27,7 +27,7 @@ long long	init_simulation(t_philo *philosophers, int philo_count)
 
 	if (init_sim_flag(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 1);
-	if (init_fork_mutex(philosophers, philo_count) != 0)
+	if (init_philo_mutex(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 2);
 	if (init_print_mutex(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 3);

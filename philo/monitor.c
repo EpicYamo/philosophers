@@ -20,6 +20,7 @@
 
 static int	check_philosophers(t_philo *philo, int *all_done);
 static void	update_eating_permissions(t_philo *philo);
+static void	update_eating_permissions_pt_two(t_philo *philo, int *philo_count);
 
 void	*monitor(void *philosophers)
 {
@@ -73,37 +74,51 @@ static int	check_philosophers(t_philo *philo, int *all_done)
 
 static void	update_eating_permissions(t_philo *philo)
 {
-	int			i;
-	long long	curr;
-	long long	left;
-	long long	right;
 	int			philo_count;
 
-	philo_count = philo[0].num_of_philo;
-	curr = philo[0].last_meal_time;
-	left = philo[1].last_meal_time;
-	right = philo[philo_count - 1].last_meal_time;
-	if ((curr > left) || (curr > right))
-		philo[0].allowed_to_eat = 1;
-	else
-		philo[0].allowed_to_eat = 0;
-	i = 1;
-	while (i < philo_count - 1)
+	update_eating_permissions_pt_two(philo, &philo_count);
+	if ((philo[0].last_meal_time > philo[1].last_meal_time)
+		|| (philo[0].last_meal_time > philo[philo_count - 1].last_meal_time))
 	{
-		curr = philo[i].last_meal_time;
-		left = philo[i + 1].last_meal_time;
-		right = philo[i - 1].last_meal_time;
-		if ((curr > left) || (curr > right))
-			philo[i].allowed_to_eat = 1;
-		else
-			philo[i].allowed_to_eat = 0;
-		i++;
+		if (pthread_mutex_trylock(&philo[0].eat_perm_mutex) == 0)
+			philo[0].who_locked_me = 1;
 	}
-	curr = philo[philo_count - 1].last_meal_time;
-	left = philo[0].last_meal_time;
-	right = philo[philo_count - 2].last_meal_time;
-	if ((curr > left) || (curr > right))
-		philo[philo_count - 1].allowed_to_eat = 1;
 	else
-		philo[philo_count - 1].allowed_to_eat = 0;
+	{
+		if (philo[0].who_locked_me == 1)
+			pthread_mutex_unlock(&philo[0].eat_perm_mutex);
+	}
+	if ((philo[philo_count - 1].last_meal_time > philo[0].last_meal_time)
+		|| (philo[philo_count - 1].last_meal_time > philo[philo_count - 2].last_meal_time))
+	{
+		if (pthread_mutex_trylock(&philo[philo_count - 1].eat_perm_mutex) == 0)
+			philo[philo_count - 1].who_locked_me = 1;
+	}
+	else
+	{
+		if (philo[philo_count - 1].who_locked_me == 1)
+			pthread_mutex_unlock(&philo[philo_count - 1].eat_perm_mutex);
+	}		
+}
+
+static void	update_eating_permissions_pt_two(t_philo *philo, int *philo_count)
+{
+	int	i;
+
+	i = -1;
+	*philo_count = philo[0].num_of_philo;
+	while (++i < *philo_count - 1)
+	{
+		if ((philo[i].last_meal_time > philo[i + 1].last_meal_time)
+			|| (philo[i].last_meal_time > philo[i - 1].last_meal_time))
+		{
+			if (pthread_mutex_trylock(&philo[i].eat_perm_mutex) == 0)
+				philo[i].who_locked_me = 1;
+		}
+		else
+		{
+			if (philo[i].who_locked_me == 1)
+				pthread_mutex_unlock(&philo[i].eat_perm_mutex);
+		}
+	}
 }

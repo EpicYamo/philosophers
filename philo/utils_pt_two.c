@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+static void	mutex_destroy_func_pt_two(t_philo *philosophers, int mutex_count, int option);
+
 long long	get_timestamp_in_ms(struct timeval start_time)
 {
 	struct timeval	current_time;
@@ -48,5 +50,47 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
 			break;
 		usleep(500);
+	}
+}
+
+void mutex_destroy_func(t_philo *philosophers, int mutex_count, int option)
+{
+	int	i;
+
+	mutex_destroy_func_pt_two(philosophers, mutex_count, option);
+	if (option == 1)
+	{
+		i = -1;
+		while (++i < mutex_count)
+			pthread_mutex_destroy(&philosophers[i].mutex_fork_left);
+		i = -1;
+		while (++i < mutex_count)
+			pthread_mutex_destroy(&philosophers[i].eat_perm_mutex);
+		if (philosophers[0].print_mutex)
+		{
+			pthread_mutex_destroy(philosophers[0].print_mutex);
+			free(philosophers[0].print_mutex);
+		}
+	}
+}
+
+static void	mutex_destroy_func_pt_two(t_philo *philosophers, int mutex_count, int option)
+{
+	int i;
+
+	if (option == 0)
+	{
+		i = -1;
+		while (++i < mutex_count)
+			pthread_mutex_destroy(&philosophers[i].mutex_fork_left);
+	}
+	if (option == 2)
+	{
+		i = -1;
+		while (++i < philosophers[0].num_of_philo)
+			pthread_mutex_destroy(&philosophers[i].mutex_fork_left);
+		i = -1;
+		while (++i < mutex_count)
+			pthread_mutex_destroy(&philosophers[i].eat_perm_mutex);
 	}
 }

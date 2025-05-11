@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
+static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count);
+
 int	init_sim_flag(t_philo *philosophers, int philo_count)
 {
 	int	i;
@@ -36,7 +38,7 @@ int	init_sim_flag(t_philo *philosophers, int philo_count)
 	return (0);
 }
 
-int	init_fork_mutex(t_philo *philosophers, int philo_count)
+int	init_philo_mutex(t_philo *philosophers, int philo_count)
 {
 	int	i;
 
@@ -50,6 +52,24 @@ int	init_fork_mutex(t_philo *philosophers, int philo_count)
 		}
 		i++;
 	}
+	i = 0;
+	while (i < philo_count)
+	{
+		if (pthread_mutex_init(&philosophers[i].eat_perm_mutex, NULL) != 0)
+		{
+			mutex_destroy_func(philosophers, i - 1, 2);
+			return (1);
+		}
+		i++;
+	}
+	init_philo_mutex_pt_two(philosophers, philo_count);
+	return (0);
+}
+
+static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count)
+{
+	int	i;
+
 	if (philosophers->num_of_philo == 1)
 		philosophers[0].mutex_fork_right = NULL;
 	else
@@ -62,7 +82,6 @@ int	init_fork_mutex(t_philo *philosophers, int philo_count)
 			i++;
 		}
 	}
-	return (0);
 }
 
 int	init_print_mutex(t_philo *philosophers, int philo_count)
