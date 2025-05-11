@@ -51,7 +51,7 @@ int	fail_free(t_philo *philosophers, int philo_count, long long error_code)
 	}
 	else if (error_code == LLONG_MAX - 3)
 	{
-		free_philosophers(philosophers, philo_count, 0);
+		free_philosophers(philosophers, philo_count, 2);
 		write(2, "Error\nMutex Init Failed\n", 24);
 	}
 	fail_free_pt_two(philosophers, philo_count, error_code);
