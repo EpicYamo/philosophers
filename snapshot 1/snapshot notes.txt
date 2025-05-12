@@ -1,0 +1,3 @@
++smartsleep ile uyku
++routine içinde her thread de filozof sayisi kontrolü
++trylock her seferinde calistiriliyor
