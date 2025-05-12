@@ -1,3 +1,3 @@
-+smartsleep ile uyku
-+routine içinde her thread de filozof sayisi kontrolü
-+trylock her seferinde calistiriliyor
++smartsleep
++alone_philo function call is in routine
++trylocks everytime
