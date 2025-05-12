@@ -53,6 +53,5 @@ void		*philo_routine(void *philosopher);
 void		*monitor(void *philosophers);
 long long	get_timestamp_in_ms(struct timeval start_time);
 void		print_message(t_philo *philo, char *message);
-void		smart_sleep(long long time_in_ms, t_philo *philo);
 
 #endif

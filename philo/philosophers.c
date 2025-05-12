@@ -14,9 +14,11 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 static void	init_philosophers_pt_two(t_philo *philosophers, int philo_count);
+static void	alone_philosopher(t_philo *philo);
 
 int main(int argc, char **argv)
 {
@@ -34,10 +36,15 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	init_philosophers(philosophers, argv, philo_count, argc);
-	error_code = init_simulation(philosophers, philo_count);
-	if (fail_free(philosophers, philo_count, error_code) != 0)
-		return (1);
-	free_philosophers(philosophers, philo_count, 1);
+	if (philo_count == 1)
+		alone_philosopher(philosophers);
+	else
+	{
+		error_code = init_simulation(philosophers, philo_count);
+		if (fail_free(philosophers, philo_count, error_code) != 0)
+			return (1);
+		free_philosophers(philosophers, philo_count, 1);
+	}	
 	return (0);
 }
 
@@ -84,4 +91,18 @@ static void	init_philosophers_pt_two(t_philo *philosophers, int philo_count)
 			i++;
 		}
 	}
+}
+
+static void	alone_philosopher(t_philo *philosophers)
+{
+	long long	timestamp;
+
+	timestamp = get_timestamp_in_ms(philosophers->start_time);
+	printf("%lld %d %s\n", timestamp, philosophers->philo_id, "is thinking");
+	timestamp = get_timestamp_in_ms(philosophers->start_time);
+	printf("%lld %d %s\n", timestamp, philosophers->philo_id, "has taken a fork");
+	usleep(philosophers->to_die * 1000);
+	timestamp = get_timestamp_in_ms(philosophers->start_time);
+	printf("%lld %d %s\n", timestamp, philosophers->philo_id, "died");
+	free(philosophers);
 }

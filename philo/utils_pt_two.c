@@ -40,19 +40,6 @@ void	print_message(t_philo *philo, char *message)
 	pthread_mutex_unlock(philo->print_mutex);
 }
 
-void	smart_sleep(long long time_in_ms, t_philo *philo)
-{
-	long long	start_time;
-
-	start_time = get_timestamp_in_ms(philo->start_time);
-	while (*(philo->sim_flag) == 1)
-	{
-		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
-			break;
-		usleep(500);
-	}
-}
-
 void mutex_destroy_func(t_philo *philosophers, int mutex_count, int option)
 {
 	int	i;

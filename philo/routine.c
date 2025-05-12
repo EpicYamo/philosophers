@@ -18,7 +18,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-static void	alone_philosopher(t_philo *philo);
 static void	eat_philosopher(t_philo *philo);
 
 void	*philo_routine(void *philosopher)
@@ -26,33 +25,17 @@ void	*philo_routine(void *philosopher)
 	t_philo		*philo;
 
 	philo = (t_philo *)philosopher;
-	if (philo->num_of_philo == 1)
-		alone_philosopher(philo);
-	else
+	while (*(philo->sim_flag) == 1)
 	{
-		while (*(philo->sim_flag) == 1)
-		{
-			print_message(philo, "is thinking");
-			pthread_mutex_lock(&philo->eat_perm_mutex);
-			philo->who_locked_me = 2;
-			pthread_mutex_unlock(&philo->eat_perm_mutex);
-			eat_philosopher(philo);
-			print_message(philo, "is sleeping");
-			smart_sleep(philo->to_sleep, philo);
-			usleep(100);
-		}
+		print_message(philo, "is thinking");
+		pthread_mutex_lock(&philo->eat_perm_mutex);
+		pthread_mutex_unlock(&philo->eat_perm_mutex);
+		eat_philosopher(philo);
+		print_message(philo, "is sleeping");
+		usleep(philo->to_sleep * 1000);
+		usleep(100);
 	}
 	return (NULL);
-}
-
-static void	alone_philosopher(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->mutex_fork_left);
-	print_message(philo, "has taken a fork");
-	smart_sleep(philo->to_die, philo);
-	pthread_mutex_unlock(&philo->mutex_fork_left);
-	print_message(philo, "died");
-	*(philo->sim_flag) = 0;
 }
 
 static void	eat_philosopher(t_philo *philo)
@@ -73,7 +56,7 @@ static void	eat_philosopher(t_philo *philo)
 	}
 	print_message(philo, "is eating");
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
-	smart_sleep(philo->to_eat, philo);
+	usleep(philo->to_eat * 1000);
 	philo->current_meals++;
 	if ((philo->required_meals != -1) && (philo->current_meals == philo->required_meals))
 		philo->done_eating = 1;

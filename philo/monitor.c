@@ -77,8 +77,9 @@ static void	update_eating_permissions(t_philo *philo)
 	int			philo_count;
 
 	update_eating_permissions_pt_two(philo, &philo_count);
-	if ((philo[0].last_meal_time > philo[1].last_meal_time)
+	if (((philo[0].last_meal_time > philo[1].last_meal_time)
 		|| (philo[0].last_meal_time > philo[philo_count - 1].last_meal_time))
+		&& philo[0].who_locked_me != 1)
 	{
 		if (pthread_mutex_trylock(&philo[0].eat_perm_mutex) == 0)
 			philo[0].who_locked_me = 1;
@@ -87,9 +88,11 @@ static void	update_eating_permissions(t_philo *philo)
 	{
 		if (philo[0].who_locked_me == 1)
 			pthread_mutex_unlock(&philo[0].eat_perm_mutex);
+		philo[0].who_locked_me = 0;
 	}
-	if ((philo[philo_count - 1].last_meal_time > philo[0].last_meal_time)
+	if (((philo[philo_count - 1].last_meal_time > philo[0].last_meal_time)
 		|| (philo[philo_count - 1].last_meal_time > philo[philo_count - 2].last_meal_time))
+		&& philo[philo_count - 1].who_locked_me != 1)
 	{
 		if (pthread_mutex_trylock(&philo[philo_count - 1].eat_perm_mutex) == 0)
 			philo[philo_count - 1].who_locked_me = 1;
@@ -98,6 +101,7 @@ static void	update_eating_permissions(t_philo *philo)
 	{
 		if (philo[philo_count - 1].who_locked_me == 1)
 			pthread_mutex_unlock(&philo[philo_count - 1].eat_perm_mutex);
+		philo[philo_count - 1].who_locked_me = 0;
 	}		
 }
 
@@ -105,12 +109,13 @@ static void	update_eating_permissions_pt_two(t_philo *philo, int *philo_count)
 {
 	int	i;
 
-	i = -1;
+	i = 0;
 	*philo_count = philo[0].num_of_philo;
 	while (++i < *philo_count - 1)
 	{
-		if ((philo[i].last_meal_time > philo[i + 1].last_meal_time)
+		if (((philo[i].last_meal_time > philo[i + 1].last_meal_time)
 			|| (philo[i].last_meal_time > philo[i - 1].last_meal_time))
+			&& philo[i].who_locked_me != 1)
 		{
 			if (pthread_mutex_trylock(&philo[i].eat_perm_mutex) == 0)
 				philo[i].who_locked_me = 1;
@@ -119,6 +124,7 @@ static void	update_eating_permissions_pt_two(t_philo *philo, int *philo_count)
 		{
 			if (philo[i].who_locked_me == 1)
 				pthread_mutex_unlock(&philo[i].eat_perm_mutex);
+			philo[i].who_locked_me = 0;
 		}
 	}
 }
