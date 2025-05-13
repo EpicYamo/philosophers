@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <limits.h>
 
 static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 static void	init_philosophers_pt_two(t_philo *philosophers, int philo_count);

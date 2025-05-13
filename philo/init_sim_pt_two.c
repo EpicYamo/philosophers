@@ -11,12 +11,7 @@
 /* ************************************************************************************** */
 
 #include "philosophers.h"
-#include <pthread.h>
-#include <stdio.h>
-#include <limits.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <sys/time.h>
 
 static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count);
 

@@ -1,3 +1,0 @@
-+smartsleep
-+alone_philo function call is in routine
-+trylocks everytime

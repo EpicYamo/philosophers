@@ -12,7 +12,6 @@
 
 #include "philosophers.h"
 #include <stdlib.h>
-#include <limits.h>
 #include <unistd.h>
 #include <stdio.h>
 
@@ -79,5 +78,18 @@ static void	mutex_destroy_func_pt_two(t_philo *philosophers, int mutex_count, in
 		i = -1;
 		while (++i < mutex_count)
 			pthread_mutex_destroy(&philosophers[i].eat_perm_mutex);
+	}
+}
+
+void	smart_sleep(long long time_in_ms, t_philo *philo)
+{
+	long long	start_time;
+
+	start_time = get_timestamp_in_ms(philo->start_time);
+	while (*(philo->sim_flag) == 1)
+	{
+		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
+			break;
+		usleep(500);
 	}
 }

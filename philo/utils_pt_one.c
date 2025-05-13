@@ -54,13 +54,19 @@ int	fail_free(t_philo *philosophers, int philo_count, long long error_code)
 		free_philosophers(philosophers, philo_count, 2);
 		write(2, "Error\nMutex Init Failed\n", 24);
 	}
-	fail_free_pt_two(philosophers, philo_count, error_code);
+	else
+		fail_free_pt_two(philosophers, philo_count, error_code);
 	return (1);
 }
 
 static void	fail_free_pt_two(t_philo *philosophers, int philo_count, long long error_code)
 {
-	if (error_code > 0)
+	if (error_code == LLONG_MAX - 4)
+	{
+		free_philosophers(philosophers, philo_count, 1);
+		write(2, "Error\nMalloc Error\n", 19);
+	}
+	else if (error_code > 0)
 	{
 		free_philosophers(philosophers, philo_count, 1);
 		write(2, "Error\nThread Creation Error\n", 28);

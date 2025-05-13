@@ -11,19 +11,16 @@
 /* ************************************************************************************** */
 
 #include "philosophers.h"
-#include <pthread.h>
-#include <stdio.h>
 #include <limits.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <sys/time.h>
 
-static long long	init_simulation_pt_two(t_philo *philosophers, int philo_count);
+static long long	create_threads(t_philo *philosophers, int philo_count, t_monitors *philo_monitors);
+static long long	join_threads(t_philo *philosophers, int philo_count, t_monitors *philo_monitors);
 
 long long	init_simulation(t_philo *philosophers, int philo_count)
 {
-	long long		i;
-	pthread_t		monitor_thread;
+	long long	error_code;
+	t_monitors	*philo_monitors;
 
 	if (init_sim_flag(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 1);
@@ -31,33 +28,66 @@ long long	init_simulation(t_philo *philosophers, int philo_count)
 		return (LLONG_MAX - 2);
 	if (init_print_mutex(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 3);
-	i = 0;
-	while (i < philo_count)
+	philo_monitors = malloc(sizeof(t_monitors));
+	if (!philo_monitors)
+		return (LLONG_MAX - 4);
+	error_code = create_threads(philosophers, philo_count, philo_monitors);
+	if (error_code != LLONG_MAX)
 	{
-		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine, &philosophers[i]) != 0)
-			return (i);
-		i++;
+		free(philo_monitors);
+		return (error_code);
 	}
-	if (pthread_create(&monitor_thread, NULL, &monitor, philosophers) != 0)
-		return (42);
-	i = init_simulation_pt_two(philosophers, philo_count);
-	if (i != LLONG_MAX)
-		return (i);
-	if (pthread_join(monitor_thread, NULL) != 0)
-		return (-42);
-	return (LLONG_MAX);
+	error_code = join_threads(philosophers, philo_count, philo_monitors);
+	free(philo_monitors);
+	return (error_code);
 }
 
-static long long	init_simulation_pt_two(t_philo *philosophers, int philo_count)
+static long long	create_threads(t_philo *philosophers, int philo_count, t_monitors *philo_monitors)
 {
 	int	i;
 
-	i = 0;
-	while (i < philo_count)
+	i = -1;
+	while (++i < philo_count)
+	{
+		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine, &philosophers[i]) != 0)
+			return (i);
+	}
+	if (pthread_create(&philo_monitors->t_death_monitor, NULL, &death_monitor, philosophers) != 0)
+		return (42);
+	if (philosophers[0].num_of_philo % 2 == 1)
+	{
+		if (pthread_create(&philo_monitors->t_eat_perm_monitor, NULL, &eat_perm_monitor, philosophers) != 0)
+			return (42);
+	}
+	if (philosophers[0].required_meals != -1)
+	{
+		if (pthread_create(&philo_monitors->t_meals_monitor, NULL, &meals_monitor, philosophers) != 0)
+			return (42);
+	}
+	return (LLONG_MAX);
+}
+
+static long long	join_threads(t_philo *philosophers, int philo_count, t_monitors *philo_monitors)
+{
+	int	i;
+
+	i = -1;
+	while (++i < philo_count)
 	{
 		if (pthread_join(philosophers[i].philo_thread, NULL) != 0)
 			return (i *= -1);
-		i++;
+	}
+	if (pthread_join(philo_monitors->t_death_monitor, NULL) != 0)
+		return (-42);
+	if (philosophers[0].num_of_philo % 2 == 1)
+	{
+		if (pthread_join(philo_monitors->t_eat_perm_monitor, NULL) != 0)
+			return (-42);
+	}
+	if (philosophers[0].required_meals != -1)
+	{
+		if (pthread_join(philo_monitors->t_meals_monitor, NULL) != 0)
+			return (-42);
 	}
 	return (LLONG_MAX);
 }
