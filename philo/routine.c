@@ -22,30 +22,51 @@ void	*philo_routine(void *philosopher)
 	philo = (t_philo *)philosopher;
 	if (philo->philo_id % 2 == 0)
 		smart_sleep(1, philo);
-	while (*(philo->sim_flag) == 1)
+	if (philo->num_of_philo % 2 == 1)
+		smart_sleep(1, philo);
+	while (check_sim(philo))
 	{
-		print_message(philo, "is thinking");
 		pthread_mutex_lock(&philo->eat_perm_mutex);
 		pthread_mutex_unlock(&philo->eat_perm_mutex);
-		eat_philosopher(philo);
+		if (philo->done_eating == 0)
+			eat_philosopher(philo);
+		else
+			break;
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
+		print_message(philo, "is thinking");
 	}
 	return (NULL);
 }
 
 static void	eat_philosopher(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->mutex_fork_left);
-	print_message(philo, "has taken a fork");
-	pthread_mutex_lock(philo->mutex_fork_right);
-	print_message(philo, "has taken a fork");
+	if (philo->philo_id % 2 == 0)
+	{
+		pthread_mutex_lock(&philo->mutex_fork_left);
+		print_message(philo, "has taken a fork");
+		pthread_mutex_lock(philo->mutex_fork_right);
+		print_message(philo, "has taken a fork");
+	}
+	else
+	{
+		pthread_mutex_lock(philo->mutex_fork_right);
+		print_message(philo, "has taken a fork");
+		pthread_mutex_lock(&philo->mutex_fork_left);
+		print_message(philo, "has taken a fork");
+	}
 	print_message(philo, "is eating");
+	pthread_mutex_lock(&philo->m_last_meal_time);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
-	smart_sleep(philo->to_eat, philo);
+	pthread_mutex_unlock(&philo->m_last_meal_time);
 	philo->current_meals++;
+	smart_sleep(philo->to_eat, philo);
 	if ((philo->required_meals != -1) && (philo->current_meals == philo->required_meals))
+	{
+		pthread_mutex_lock(&philo->m_done_eating);
 		philo->done_eating = 1;
+		pthread_mutex_unlock(&philo->m_done_eating);
+	}
 	pthread_mutex_unlock(&philo->mutex_fork_left);
 	pthread_mutex_unlock(philo->mutex_fork_right);
 }

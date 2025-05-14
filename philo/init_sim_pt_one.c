@@ -28,9 +28,11 @@ long long	init_simulation(t_philo *philosophers, int philo_count)
 		return (LLONG_MAX - 2);
 	if (init_print_mutex(philosophers, philo_count) != 0)
 		return (LLONG_MAX - 3);
+	if (init_sim_mutex(philosophers, philo_count) != 0)
+		return (LLONG_MAX - 4);
 	philo_monitors = malloc(sizeof(t_monitors));
 	if (!philo_monitors)
-		return (LLONG_MAX - 4);
+		return (LLONG_MAX - 5);
 	error_code = create_threads(philosophers, philo_count, philo_monitors);
 	if (error_code != LLONG_MAX)
 	{
@@ -79,14 +81,14 @@ static long long	join_threads(t_philo *philosophers, int philo_count, t_monitors
 	}
 	if (pthread_join(philo_monitors->t_death_monitor, NULL) != 0)
 		return (-42);
-	if (philosophers[0].num_of_philo % 2 == 1)
-	{
-		if (pthread_join(philo_monitors->t_eat_perm_monitor, NULL) != 0)
-			return (-42);
-	}
 	if (philosophers[0].required_meals != -1)
 	{
 		if (pthread_join(philo_monitors->t_meals_monitor, NULL) != 0)
+			return (-42);
+	}
+	if (philosophers[0].num_of_philo % 2 == 1)
+	{
+		if (pthread_join(philo_monitors->t_eat_perm_monitor, NULL) != 0)
 			return (-42);
 	}
 	return (LLONG_MAX);

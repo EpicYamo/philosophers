@@ -20,20 +20,22 @@ void	*meals_monitor(void *philosophers)
     int     i;
 
 	philo = (t_philo *)philosophers;
-	while (*(philo->sim_flag) == 1)
+	while (check_sim(philo))
 	{
 		all_done = 1;
         i = -1;
         while(++i < philo[0].num_of_philo)
         {
-            if ((philo[i].required_meals != -1) && (philo[i].done_eating == 0))
+			pthread_mutex_lock(&philo[i].m_done_eating);
+            if (philo[i].done_eating == 0)
 			    all_done = 0;
+			pthread_mutex_unlock(&philo[i].m_done_eating);
         }
-		if ((philo[0].required_meals != -1) && (all_done == 1))
+		if (all_done == 1)
 		{
-			pthread_mutex_lock(philo[0].print_mutex);
+			pthread_mutex_lock(philo[0].sim_mutex);
 			*(philo[0].sim_flag) = 0;
-			pthread_mutex_unlock(philo[0].print_mutex);
+			pthread_mutex_unlock(philo[0].sim_mutex);
 			return (NULL);
 		}
 		usleep(500);
