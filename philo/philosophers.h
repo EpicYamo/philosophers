@@ -19,7 +19,6 @@
 typedef struct s_philosopher
 {
 	int				philo_id;
-	int				left_fork;
 	int				current_meals;
 	int				done_eating;
 	int				eat_perm_mutex_flag;
@@ -28,11 +27,9 @@ typedef struct s_philosopher
 	int				to_eat;
 	int				to_sleep;
 	int				required_meals;
-	int				*right_fork;
-	int				*sim_flag;
 	long long		last_meal_time;
 	struct timeval	start_time;
-	pthread_t		philo_thread;
+	int				*sim_flag;
 	pthread_mutex_t	mutex_fork_left;
 	pthread_mutex_t	eat_perm_mutex;
 	pthread_mutex_t	m_last_meal_time;
@@ -40,7 +37,7 @@ typedef struct s_philosopher
 	pthread_mutex_t	*mutex_fork_right;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*sim_mutex;
-	
+	pthread_t		philo_thread;
 }t_philo;
 
 typedef struct s_monitors
@@ -52,7 +49,6 @@ typedef struct s_monitors
 
 int			ft_atoi_mod(const char *str);
 int			check_arguments(int argc, char **argv);
-void		init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 long long	init_simulation(t_philo *philosophers, int philo_count);
 int			init_sim_flag(t_philo *philosophers, int philo_count);
 int			init_philo_mutex(t_philo *philosophers, int philo_count);
@@ -69,5 +65,6 @@ void		print_message(t_philo *philo, char *message);
 void		smart_sleep(long long time_in_ms, t_philo *philo);
 int			check_sim(t_philo *philo);
 int			init_sim_mutex(t_philo *philosophers, int philo_count);
+long long	ft_atoll(const char *str);
 
 #endif

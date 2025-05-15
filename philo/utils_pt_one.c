@@ -72,3 +72,20 @@ static void	fail_free_pt_two(t_philo *philosophers, int philo_count, long long e
 		write(2, "Error\nThread Join Error\n", 24);
 	}
 }
+
+long long	ft_atoll(const char *str)
+{
+	int			i;
+	long long	strg;
+
+	strg = 0;
+	i = 0;
+	while (str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		strg = (10 * strg) + (str[i] - '0');
+		i++;
+	}
+	return (strg);
+}

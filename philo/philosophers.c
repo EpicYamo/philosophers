@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 static int	alone_philosopher(t_philo *philosophers);
 static void	*alone_routine(void *philosopher);
 
@@ -45,6 +46,33 @@ int main(int argc, char **argv)
 		free_philosophers(philosophers, ft_atoi_mod(argv[1]), 6);
 	}	
 	return (0);
+}
+
+static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc)
+{
+	int				i;
+	struct timeval	starting_time;
+
+	i = 0;
+	gettimeofday(&starting_time, NULL);
+	while (i < philo_count)
+	{
+		philosophers[i].philo_id = i + 1;
+		philosophers[i].current_meals = 0;
+		philosophers[i].done_eating = 0;
+		philosophers[i].eat_perm_mutex_flag = 0;
+		philosophers[i].num_of_philo = philo_count;
+		philosophers[i].to_die = ft_atoi_mod(argv[2]);
+		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
+		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);
+		philosophers[i].last_meal_time = get_timestamp_in_ms(starting_time);
+		philosophers[i].start_time = starting_time;
+		if (argc == 6)
+			philosophers[i].required_meals = ft_atoi_mod(argv[5]);
+		else
+			philosophers[i].required_meals = -1;
+		i++;
+	}
 }
 
 static int	alone_philosopher(t_philo *philosophers)

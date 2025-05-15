@@ -31,7 +31,12 @@ void	*philo_routine(void *philosopher)
 		if (philo->done_eating == 0)
 			eat_philosopher(philo);
 		else
+		{
+			pthread_mutex_lock(&philo->m_last_meal_time);
+			philo->last_meal_time = LLONG_MAX;
+			pthread_mutex_unlock(&philo->m_last_meal_time);
 			break;
+		}
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
 		print_message(philo, "is thinking");
