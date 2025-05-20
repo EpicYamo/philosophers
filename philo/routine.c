@@ -12,6 +12,7 @@
 
 #include "philosophers.h"
 #include <unistd.h>
+#include <limits.h>
 
 static void	eat_philosopher(t_philo *philo);
 
