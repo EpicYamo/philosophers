@@ -21,25 +21,25 @@ typedef struct s_philosopher
 	int				philo_id;
 	int				current_meals;
 	int				done_eating;
-
 	long long		last_meal_time;
 	struct timeval	start_time;
-	
 	pid_t			philo_pid;
-
-	//arguments
 	int				num_of_philo;
 	int				to_die;
 	int				to_eat;
 	int				to_sleep;
 	int				required_meals;
-	//arguments	
-
 	sem_t			*s_fork;
 	sem_t			*s_print;
 }t_philo;
 
-void	check_arguments(int argc, char **argv);
-void	init_simulation(t_philo *philosophers, int philo_count);
+void		check_arguments(int argc, char **argv);
+void		init_simulation(t_philo *philosophers, int philo_count);
+long long	ft_atoll(const char *str);
+int			ft_atoi_mod(const char *str);
+long long	get_timestamp_in_ms(struct timeval start_time);
+void		*philo_routine(void *philosopher);
+void		print_message(t_philo *philo, char *message);
+void		smart_sleep(long long time_in_ms, t_philo *philo);
 
 #endif

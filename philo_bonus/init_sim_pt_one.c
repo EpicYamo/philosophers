@@ -14,6 +14,10 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 static void	init_fork_semaphore(t_philo *philosophers, int philo_count);
 static void	init_print_semaphore(t_philo *philosophers, int philo_count);
@@ -24,11 +28,25 @@ void	init_simulation(t_philo *philosophers, int philo_count)
 	pid_t	proc_pid;
 
 	init_fork_semaphore(philosophers, philo_count);
-	init_print_semaphore(philosophers, philo_count);	
-	while ((i < philo_count) && (proc_pid > 0))
+	init_print_semaphore(philosophers, philo_count);
+	i = 0;
+	while (i < philo_count)
 	{
-		//fork
-	}
+		proc_pid = fork();
+		if (proc_pid < 0)
+		{
+			printf("fork failed");
+			exit(EXIT_FAILURE);
+		}
+		else if (proc_pid == 0)
+		{
+			printf("Philosopher %d process started (PID: %d)\n", i + 1, getpid());
+			philo_routine(&philosophers[i]);
+		}
+		else
+			philosophers[i].philo_pid = proc_pid;
+		i++;
+	}	
 }
 
 static void	init_fork_semaphore(t_philo *philosophers, int philo_count)
@@ -36,24 +54,15 @@ static void	init_fork_semaphore(t_philo *philosophers, int philo_count)
 	sem_t	*fork_semaphore;
 	int		i;
 
-	fork_semaphore = malloc(sizeof(sem_t));
-	if (!fork_semaphore)
+	fork_semaphore = sem_open("/fork_semaphore", O_CREAT | O_EXCL, 0644, philo_count);
+	if (fork_semaphore == SEM_FAILED)
 	{
 		free(philosophers);
 		exit(EXIT_FAILURE);
 	}
-	if (sem_init(fork_semaphore, 0, philo_count) != 0)
-	{
-		free(fork_semaphore);
-		free(philosophers);
-		exit(EXIT_FAILURE);
-	}
-	i = 0;
-	while (i < philo_count)
-	{
+	i = -1;
+	while (++i < philo_count)
 		philosophers[i].s_fork = fork_semaphore;
-		i++;
-	}
 }
 
 static void	init_print_semaphore(t_philo *philosophers, int philo_count)
@@ -61,17 +70,11 @@ static void	init_print_semaphore(t_philo *philosophers, int philo_count)
 	sem_t	*printf_semaphore;
 	int		i;
 
-	printf_semaphore = malloc(sizeof(sem_t));
-	if (!printf_semaphore)
+	printf_semaphore = sem_open("/print_semaphore", O_CREAT | O_EXCL, 0644, 1);
+	if (printf_semaphore == SEM_FAILED)
 	{
-		free(philosophers[0].s_fork);
-		free(philosophers);
-		exit(EXIT_FAILURE);
-	}
-	if (sem_init(printf_semaphore, 0, 1) != 0)
-	{
-		free(printf_semaphore);
-		free(philosophers[0].s_fork);
+		sem_close(philosophers[0].s_fork);
+		sem_unlink("/fork_semaphore");
 		free(philosophers);
 		exit(EXIT_FAILURE);
 	}

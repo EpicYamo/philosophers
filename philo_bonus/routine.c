@@ -13,6 +13,7 @@
 #include "philosophers.h"
 #include <unistd.h>
 #include <limits.h>
+#include <stdlib.h>
 
 static void	eat_philosopher(t_philo *philo);
 
@@ -21,21 +22,17 @@ void	*philo_routine(void *philosopher)
 	t_philo		*philo;
 
 	philo = (t_philo *)philosopher;
-	if (philo->philo_id % 2 == 0)
-		smart_sleep(1, philo);
-	if (philo->num_of_philo % 2 == 1)
-		smart_sleep(1, philo);
-	while (check_sim(philo))
+	while (1)
 	{
 		if (philo->done_eating == 0)
 			eat_philosopher(philo);
 		else
-			break;
+			exit(1);
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
 		print_message(philo, "is thinking");
 	}
-	return (NULL);
+	exit(2);
 }
 
 static void	eat_philosopher(t_philo *philo)

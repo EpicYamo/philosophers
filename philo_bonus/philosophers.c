@@ -14,12 +14,18 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
+static void	cleanup_resources(t_philo *philosophers);
 
 int main(int argc, char **argv)
 {
-	t_philo			*philosophers;
+	t_philo	*philosophers;
+	int		proc_pid;
+	int		status;
+	int		i;
 
 	check_arguments(argc, argv);
 	philosophers = malloc(sizeof(t_philo) * ft_atoi_mod(argv[1]));
@@ -29,9 +35,31 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	init_philosophers(philosophers, argv, ft_atoi_mod(argv[1]), argc);
-	if (ft_atoi_mod(argv[1]) == 1)
-		alone_philosopher(philosophers); //alone_philosopher should start another process with fork and exit program.
 	init_simulation(philosophers, ft_atoi_mod(argv[1]));
+	while ((proc_pid = waitpid(-1, &status, 0)) > 0)
+	{
+		if (WIFEXITED(status))
+		{
+			int code = WEXITSTATUS(status);
+			if (code == 1)
+				printf("Philosopher (PID: %d) finished eating.\n", proc_pid);
+			else if (code == 2)
+			{
+				printf("Philosopher (PID: %d) died! Killing others.\n", proc_pid);
+				i = -1;
+				while (++i < (philosophers[0].num_of_philo - 1))
+				{
+					if (philosophers[i].philo_pid != proc_pid)
+						kill(philosophers[i].philo_pid, SIGTERM);
+				}
+				cleanup_resources(philosophers);
+				exit (0);
+			}
+			else
+				printf("Philosopher (PID: %d) exited with code %d.\n", proc_pid, code);
+		}
+	}
+	cleanup_resources(philosophers);
 	return (0);
 }
 
@@ -45,6 +73,7 @@ static void	init_philosophers(t_philo *philosophers, char **argv, int philo_coun
 	while (i < philo_count)
 	{
 		philosophers[i].philo_id = i + 1;
+		philosophers[i].philo_pid = 0;
 		philosophers[i].current_meals = 0;
 		philosophers[i].done_eating = 0;
 		philosophers[i].num_of_philo = philo_count;
@@ -59,4 +88,19 @@ static void	init_philosophers(t_philo *philosophers, char **argv, int philo_coun
 			philosophers[i].required_meals = -1;
 		i++;
 	}
+}
+
+static void	cleanup_resources(t_philo *philosophers)
+{
+	if (philosophers[0].s_fork)
+	{
+		sem_close(philosophers[0].s_fork);
+		sem_unlink("/fork_semaphore");
+	}
+	if (philosophers[0].s_print)
+	{
+		sem_close(philosophers[0].s_print);
+		sem_unlink("/print_semaphore");
+	}
+	free(philosophers);
 }
