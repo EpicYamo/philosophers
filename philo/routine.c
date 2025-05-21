@@ -22,7 +22,7 @@ void	*philo_routine(void *philosopher)
 
 	philo = (t_philo *)philosopher;
 	if (philo->philo_id % 2 == 0)
-		smart_sleep(1, philo);
+		usleep(100);
 	if (philo->num_of_philo % 2 == 1)
 		smart_sleep(1, philo);
 	while (check_sim(philo))
