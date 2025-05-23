@@ -75,7 +75,7 @@ static long long	join_threads(t_philo *philosophers, int philo_count, t_monitors
 			return (i *= -1);
 	}
 	pthread_mutex_lock(philosophers[0].sim_mutex);
-	philosophers[0].sim_flag = 0;
+	*(philosophers[0].sim_flag) = 0;
 	pthread_mutex_unlock(philosophers[0].sim_mutex);
 	if (pthread_join(philo_monitors->t_death_monitor, NULL) != 0)
 		return (-42);
