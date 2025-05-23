@@ -60,16 +60,6 @@ static void	mutex_destroy_func_pt_two(t_philo *philosophers, int mutex_count, in
 		while (++i < compare)
 			pthread_mutex_destroy(&philosophers[i].m_last_meal_time);
 	}
-	if (option > 3)
-	{
-		if (option > 4)
-			compare = philosophers[0].num_of_philo;
-		else
-			compare = mutex_count;
-		i = -1;
-		while (++i < compare)
-			pthread_mutex_destroy(&philosophers[i].m_done_eating);
-	}
 	if (option > 4)
 		mutex_destroy_func_pt_three(philosophers, option);
 }

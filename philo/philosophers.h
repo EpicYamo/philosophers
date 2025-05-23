@@ -33,7 +33,6 @@ typedef struct s_philosopher
 	pthread_mutex_t	mutex_fork_left;
 	pthread_mutex_t	eat_perm_mutex;
 	pthread_mutex_t	m_last_meal_time;
-	pthread_mutex_t	m_done_eating;
 	pthread_mutex_t	*mutex_fork_right;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*sim_mutex;
@@ -58,7 +57,6 @@ void		mutex_destroy_func(t_philo *philosophers, int mutex_count, int option);
 void		free_philosophers(t_philo *philosophers, int philo_count, int option);
 void		*philo_routine(void *philosopher);
 void		*death_monitor(void *philosophers);
-void		*meals_monitor(void *philosophers);
 void		*eat_perm_monitor(void *philosophers);
 long long	get_timestamp_in_ms(struct timeval start_time);
 void		print_message(t_philo *philo, char *message);

@@ -21,7 +21,7 @@ void	*philo_routine(void *philosopher)
 	t_philo		*philo;
 
 	philo = (t_philo *)philosopher;
-	if (philo->philo_id % 2 == 0)
+	if (philo->philo_id % 2 == 1)
 		usleep(100);
 	if (philo->num_of_philo % 2 == 1)
 		smart_sleep(1, philo);
@@ -29,9 +29,8 @@ void	*philo_routine(void *philosopher)
 	{
 		pthread_mutex_lock(&philo->eat_perm_mutex);
 		pthread_mutex_unlock(&philo->eat_perm_mutex);
-		if (philo->done_eating == 0)
-			eat_philosopher(philo);
-		else
+		eat_philosopher(philo);
+		if (philo->done_eating == 1)
 		{
 			pthread_mutex_lock(&philo->m_last_meal_time);
 			philo->last_meal_time = LLONG_MAX;
@@ -68,11 +67,7 @@ static void	eat_philosopher(t_philo *philo)
 	philo->current_meals++;
 	smart_sleep(philo->to_eat, philo);
 	if ((philo->required_meals != -1) && (philo->current_meals == philo->required_meals))
-	{
-		pthread_mutex_lock(&philo->m_done_eating);
 		philo->done_eating = 1;
-		pthread_mutex_unlock(&philo->m_done_eating);
-	}
 	pthread_mutex_unlock(&philo->mutex_fork_left);
 	pthread_mutex_unlock(philo->mutex_fork_right);
 }

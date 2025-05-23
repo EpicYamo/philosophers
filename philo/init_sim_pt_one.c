@@ -61,11 +61,6 @@ static long long	create_threads(t_philo *philosophers, int philo_count, t_monito
 		if (pthread_create(&philo_monitors->t_eat_perm_monitor, NULL, &eat_perm_monitor, philosophers) != 0)
 			return (42);
 	}
-	if (philosophers[0].required_meals != -1)
-	{
-		if (pthread_create(&philo_monitors->t_meals_monitor, NULL, &meals_monitor, philosophers) != 0)
-			return (42);
-	}
 	return (LLONG_MAX);
 }
 
@@ -79,13 +74,11 @@ static long long	join_threads(t_philo *philosophers, int philo_count, t_monitors
 		if (pthread_join(philosophers[i].philo_thread, NULL) != 0)
 			return (i *= -1);
 	}
+	pthread_mutex_lock(philosophers[0].sim_mutex);
+	philosophers[0].sim_flag = 0;
+	pthread_mutex_unlock(philosophers[0].sim_mutex);
 	if (pthread_join(philo_monitors->t_death_monitor, NULL) != 0)
 		return (-42);
-	if (philosophers[0].required_meals != -1)
-	{
-		if (pthread_join(philo_monitors->t_meals_monitor, NULL) != 0)
-			return (-42);
-	}
 	if (philosophers[0].num_of_philo % 2 == 1)
 	{
 		if (pthread_join(philo_monitors->t_eat_perm_monitor, NULL) != 0)
