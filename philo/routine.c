@@ -23,12 +23,8 @@ void	*philo_routine(void *philosopher)
 	philo = (t_philo *)philosopher;
 	if (philo->philo_id % 2 == 1)
 		usleep(100);
-	if (philo->num_of_philo % 2 == 1)
-		smart_sleep(1, philo);
 	while (check_sim(philo))
 	{
-		pthread_mutex_lock(&philo->eat_perm_mutex);
-		pthread_mutex_unlock(&philo->eat_perm_mutex);
 		eat_philosopher(philo);
 		if (philo->done_eating == 1)
 		{
@@ -40,6 +36,10 @@ void	*philo_routine(void *philosopher)
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
 		print_message(philo, "is thinking");
+		if (philo->num_of_philo % 2 == 1)
+			smart_sleep(((philo->to_eat * 2) - philo->to_sleep), philo);
+		else
+			usleep(100);
 	}
 	return (NULL);
 }

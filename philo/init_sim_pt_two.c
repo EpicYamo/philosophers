@@ -13,8 +13,7 @@
 #include "philosophers.h"
 #include <stdlib.h>
 
-static int	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count);
-static void	init_philo_mutex_pt_three(t_philo *philosophers, int philo_count);
+static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count);
 
 int	init_sim_flag(t_philo *philosophers, int philo_count)
 {
@@ -47,35 +46,17 @@ int	init_philo_mutex(t_philo *philosophers, int philo_count)
 	i = -1;
 	while (++i < philo_count)
 	{
-		if (pthread_mutex_init(&philosophers[i].eat_perm_mutex, NULL) != 0)
+		if (pthread_mutex_init(&philosophers[i].m_last_meal_time, NULL) != 0)
 		{
 			mutex_destroy_func(philosophers, i - 1, 2);
 			return (1);
 		}
 	}
-	if (init_philo_mutex_pt_two(philosophers, philo_count) != 0)
-		return (1);
-	init_philo_mutex_pt_three(philosophers, philo_count);
+	init_philo_mutex_pt_two(philosophers, philo_count);
 	return (0);
 }
 
-static int	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count)
-{
-	int	i;
-
-	i = -1;
-	while (++i < philo_count)
-	{
-		if (pthread_mutex_init(&philosophers[i].m_last_meal_time, NULL) != 0)
-		{
-			mutex_destroy_func(philosophers, i - 1, 3);
-			return (1);
-		}
-	}
-	return (0);
-}
-
-static void	init_philo_mutex_pt_three(t_philo *philosophers, int philo_count)
+static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count)
 {
 	int	i;
 
