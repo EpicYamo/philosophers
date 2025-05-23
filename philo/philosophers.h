@@ -42,7 +42,6 @@ typedef struct s_philosopher
 typedef struct s_monitors
 {
 	pthread_t	t_death_monitor;
-	pthread_t	t_meals_monitor;
 	pthread_t	t_eat_perm_monitor;
 }t_monitors;
 
