@@ -35,14 +35,16 @@ void	init_simulation(t_philo *philosophers, int philo_count)
 		proc_pid = fork();
 		if (proc_pid < 0)
 		{
-			printf("fork failed");
+			printf("fork failed\n");
+			sem_close(philosophers[0].s_fork);
+			sem_close(philosophers[0].s_print);
+			sem_unlink("/fork_semaphore");
+			sem_unlink("/print_semaphore");
+			free(philosophers);
 			exit(EXIT_FAILURE);
 		}
 		else if (proc_pid == 0)
-		{
-			printf("Philosopher %d process started (PID: %d)\n", i + 1, getpid());
 			philo_routine(&philosophers[i]);
-		}
 		else
 			philosophers[i].philo_pid = proc_pid;
 		i++;
@@ -57,6 +59,7 @@ static void	init_fork_semaphore(t_philo *philosophers, int philo_count)
 	fork_semaphore = sem_open("/fork_semaphore", O_CREAT | O_EXCL, 0644, philo_count);
 	if (fork_semaphore == SEM_FAILED)
 	{
+		printf("fork semaphore init failed\n");
 		free(philosophers);
 		exit(EXIT_FAILURE);
 	}
@@ -73,6 +76,7 @@ static void	init_print_semaphore(t_philo *philosophers, int philo_count)
 	printf_semaphore = sem_open("/print_semaphore", O_CREAT | O_EXCL, 0644, 1);
 	if (printf_semaphore == SEM_FAILED)
 	{
+		printf("print semaphore init failed\n");
 		sem_close(philosophers[0].s_fork);
 		sem_unlink("/fork_semaphore");
 		free(philosophers);

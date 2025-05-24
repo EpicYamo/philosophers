@@ -1,5 +1,4 @@
-SRCS 			= philosophers.c check_arguments.c init_sim_pt_one.c routine.c \
-					utils_pt_one.c utils_pt_two.c \
+SRCS 			= philosophers.c check_arguments.c init_sim_pt_one.c routine.c utils_pt_one.c \
 
 NAME			=	philo_bonus
 CC				=	cc

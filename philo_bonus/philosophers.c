@@ -19,13 +19,11 @@
 
 static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
 static void	cleanup_resources(t_philo *philosophers);
+static void	wait_process(t_philo *philosophers);
 
 int main(int argc, char **argv)
 {
 	t_philo	*philosophers;
-	int		proc_pid;
-	int		status;
-	int		i;
 
 	check_arguments(argc, argv);
 	philosophers = malloc(sizeof(t_philo) * ft_atoi_mod(argv[1]));
@@ -36,31 +34,9 @@ int main(int argc, char **argv)
 	}
 	init_philosophers(philosophers, argv, ft_atoi_mod(argv[1]), argc);
 	init_simulation(philosophers, ft_atoi_mod(argv[1]));
-	while ((proc_pid = waitpid(-1, &status, 0)) > 0)
-	{
-		if (WIFEXITED(status))
-		{
-			int code = WEXITSTATUS(status);
-			if (code == 1)
-				printf("Philosopher (PID: %d) finished eating.\n", proc_pid);
-			else if (code == 2)
-			{
-				printf("Philosopher (PID: %d) died! Killing others.\n", proc_pid);
-				i = -1;
-				while (++i < (philosophers[0].num_of_philo - 1))
-				{
-					if (philosophers[i].philo_pid != proc_pid)
-						kill(philosophers[i].philo_pid, SIGTERM);
-				}
-				cleanup_resources(philosophers);
-				exit (0);
-			}
-			else
-				printf("Philosopher (PID: %d) exited with code %d.\n", proc_pid, code);
-		}
-	}
+	wait_process(philosophers);
 	cleanup_resources(philosophers);
-	return (0);
+	exit(0);
 }
 
 static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc)
@@ -80,7 +56,7 @@ static void	init_philosophers(t_philo *philosophers, char **argv, int philo_coun
 		philosophers[i].to_die = ft_atoi_mod(argv[2]);
 		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
 		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);
-		philosophers[i].last_meal_time = get_timestamp_in_ms(starting_time);
+		philosophers[i].last_meal_time = 0;
 		philosophers[i].start_time = starting_time;
 		if (argc == 6)
 			philosophers[i].required_meals = ft_atoi_mod(argv[5]);
@@ -88,6 +64,38 @@ static void	init_philosophers(t_philo *philosophers, char **argv, int philo_coun
 			philosophers[i].required_meals = -1;
 		i++;
 	}
+}
+
+static void	wait_process(t_philo *philosophers)
+{
+	int	proc_pid;
+	int	status;
+	int	i;
+	int	dead_philo;
+
+	dead_philo = 0;
+	while ((proc_pid = waitpid(-1, &status, 0)) > 0)
+	{
+		if (WIFEXITED(status))
+		{
+			int code = WEXITSTATUS(status);
+			if (code == 3)
+			{
+				i = -1;
+				while (++i < (philosophers[0].num_of_philo - 1))
+				{
+					if (philosophers[i].philo_pid != proc_pid)
+						kill(philosophers[i].philo_pid, SIGTERM);
+					else
+						dead_philo = i;
+				}
+				printf("%lld %d died\n", get_timestamp_in_ms(philosophers[dead_philo].start_time), philosophers[dead_philo].philo_id);
+				cleanup_resources(philosophers);
+				exit (0);
+			}
+		}
+	}
+
 }
 
 static void	cleanup_resources(t_philo *philosophers)

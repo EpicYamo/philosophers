@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
+#include <stdio.h>
 
 long long	ft_atoll(const char *str)
 {
@@ -58,4 +59,33 @@ long long	get_timestamp_in_ms(struct timeval start_time)
 	ms = (current_time.tv_sec - start_time.tv_sec) * 1000;
 	ms += (current_time.tv_usec - start_time.tv_usec) / 1000;
 	return (ms);
+}
+
+void	print_message(t_philo *philo, char *message)
+{
+	long long	timestamp;
+	sem_wait(philo->s_print);
+	timestamp = get_timestamp_in_ms(philo->start_time);
+	printf("%lld %d %s\n", timestamp, philo->philo_id, message);
+	sem_post(philo->s_print);
+}
+
+void	smart_sleep(long long time_in_ms, t_philo *philo)
+{
+	long long	start_time;
+
+	start_time = get_timestamp_in_ms(philo->start_time);
+	while (1)
+	{
+		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
+			break;
+		usleep(500);
+		if ((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time) > philo->to_die)
+		{
+			sem_wait(philo->s_print);
+			sem_close(philo->s_fork);
+			sem_close(philo->s_print);
+			exit(3);
+		}
+	}
 }
