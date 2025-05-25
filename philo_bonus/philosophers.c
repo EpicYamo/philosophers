@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	init_simulation(philosophers, ft_atoi_mod(argv[1]));
 	wait_process(philosophers);
 	cleanup_resources(philosophers);
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc)
@@ -91,7 +91,7 @@ static void	wait_process(t_philo *philosophers)
 				}
 				printf("%lld %d died\n", get_timestamp_in_ms(philosophers[dead_philo].start_time), philosophers[dead_philo].philo_id);
 				cleanup_resources(philosophers);
-				exit (0);
+				exit(EXIT_SUCCESS);
 			}
 		}
 	}

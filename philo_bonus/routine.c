@@ -66,5 +66,7 @@ static void alone_philosopher(t_philo *philo)
 {
 	print_message(philo, "has taken a fork");
 	smart_sleep(philo->to_die, philo);
+	sem_close(philo->s_fork);
+	sem_close(philo->s_print);
 	exit (3);
 }
