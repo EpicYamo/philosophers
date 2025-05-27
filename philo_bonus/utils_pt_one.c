@@ -12,7 +12,6 @@
 
 #include "philosophers.h"
 #include <stdlib.h>
-#include <limits.h>
 #include <unistd.h>
 #include <stdio.h>
 
@@ -64,6 +63,7 @@ long long	get_timestamp_in_ms(struct timeval start_time)
 void	print_message(t_philo *philo, char *message)
 {
 	long long	timestamp;
+
 	sem_wait(philo->s_print);
 	timestamp = get_timestamp_in_ms(philo->start_time);
 	printf("%lld %d %s\n", timestamp, philo->philo_id, message);
@@ -80,9 +80,10 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
 			break;
 		usleep(500);
-		if ((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time) > philo->to_die)
+		if ((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time) >= philo->to_die)
 		{
 			sem_wait(philo->s_print);
+			printf("%lld %d died\n", get_timestamp_in_ms(philo->start_time), philo->philo_id);
 			sem_close(philo->s_fork);
 			sem_close(philo->s_print);
 			exit(3);

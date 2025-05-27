@@ -34,12 +34,13 @@ typedef struct s_philosopher
 }t_philo;
 
 void		check_arguments(int argc, char **argv);
-void		init_simulation(t_philo *philosophers, int philo_count);
+void		init_simulation(t_philo *philo, int philo_c);
 long long	ft_atoll(const char *str);
 int			ft_atoi_mod(const char *str);
 long long	get_timestamp_in_ms(struct timeval start_time);
-void		*philo_routine(void *philosopher);
+void		*philo_routine(t_philo *philo);
 void		print_message(t_philo *philo, char *message);
 void		smart_sleep(long long time_in_ms, t_philo *philo);
+void		cleanup_resources(t_philo *philo);
 
 #endif
