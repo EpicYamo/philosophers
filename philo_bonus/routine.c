@@ -22,22 +22,24 @@ static void	philo_loop(t_philo *philo);
 
 void	*philo_routine(t_philo *philo)
 {
-	if (philo->num_of_philo == 1)
-		alone_philosopher(philo);
+	int	thread_creation;
+
+	thread_creation = 1;
 	if (pthread_create(&philo->end_sim_mon, NULL, &end_sim_monitor, philo) != 0)
 	{
-		printf("Thread Creation at Philo: %d Failed Endin the Simulation", philo->philo_id);
+		printf("Thread Creation at Philo: %d Failed Ending the Simulation\n", philo->philo_id);
 		end_sim_func(philo);
+		philo->sim_flag = 0;
+		thread_creation = 0;
 	}
-	if (philo->philo_id % 2 == 1)
-		smart_sleep(1, philo);
 	philo_loop(philo);
 	if (philo->done_eating == 1)
 	{
 		smart_sleep((philo->to_eat * 2), philo);
 		sem_post(philo->s_death);
 	}
-	pthread_join(philo->end_sim_mon, NULL);
+	if (thread_creation == 1)
+		pthread_join(philo->end_sim_mon, NULL);
 	sem_close(philo->s_death);
 	sem_close(philo->s_fork);
 	sem_close(philo->s_print);
@@ -49,19 +51,26 @@ void	*philo_routine(t_philo *philo)
 
 static void	philo_loop(t_philo *philo)
 {
-	while (check_sim(philo))
+	if (philo->philo_id % 2 == 1)
+		smart_sleep(1, philo);
+	if (philo->num_of_philo == 1)
+		alone_philosopher(philo);
+	else
 	{
-		eat_philosopher(philo);
-		if (philo->done_eating == 1)
-			break;
-		print_message(philo, "is sleeping");
-		smart_sleep(philo->to_sleep, philo);
-		print_message(philo, "is thinking");
-		if (philo->num_of_philo % 2 == 1)
-			smart_sleep(((philo->to_eat * 2) - philo->to_sleep), philo);
-		else
-			smart_sleep((philo->to_eat - philo->to_sleep), philo);
-	}
+		while (check_sim(philo))
+		{
+			eat_philosopher(philo);
+			if (philo->done_eating == 1)
+				break;
+			print_message(philo, "is sleeping");
+			smart_sleep(philo->to_sleep, philo);
+			print_message(philo, "is thinking");
+			if (philo->num_of_philo % 2 == 1)
+				smart_sleep(((philo->to_eat * 2) - philo->to_sleep), philo);
+			else
+				smart_sleep((philo->to_eat - philo->to_sleep), philo);
+		}
+	}	
 }
 
 static void	eat_philosopher(t_philo *philo)

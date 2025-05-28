@@ -85,6 +85,7 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 		{
 			end_sim_func(philo);
 			philo->dead_flag = 1;
+			philo->sim_flag = 0;
 		}
 	}
 }
