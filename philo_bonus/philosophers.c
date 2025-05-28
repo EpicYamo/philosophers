@@ -14,12 +14,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <signal.h>
 #include <sys/wait.h>
+#include <stdio.h>
 
 static void	init_philo(t_philo *philo, char **argv, int philo_c, int argc);
 static void	wait_process(t_philo *philo);
-static void	philo_death_handler(t_philo *philo, int proc_pid);
+static void	find_dead_philo(int proc_pid, t_philo *philo, int *philo_index, int *flag);
 
 int main(int argc, char **argv)
 {
@@ -52,11 +52,13 @@ static void	init_philo(t_philo *philo, char **argv, int philo_c, int argc)
 		philo[i].philo_pid = 0;
 		philo[i].current_meals = 0;
 		philo[i].done_eating = 0;
+		philo[i].dead_flag = 0;
 		philo[i].num_of_philo = philo_c;
 		philo[i].to_die = ft_atoi_mod(argv[2]);
 		philo[i].to_eat = ft_atoi_mod(argv[3]);
 		philo[i].to_sleep = ft_atoi_mod(argv[4]);
 		philo[i].last_meal_time = 0;
+		philo[i].sim_flag = 1;
 		philo[i].start_time = starting_time;
 		if (argc == 6)
 			philo[i].required_meals = ft_atoi_mod(argv[5]);
@@ -71,27 +73,35 @@ static void	wait_process(t_philo *philo)
 	int	proc_pid;
 	int	status;
 	int	code;
+	int	philo_index;
+	int	flag;
 
+	flag = 0;
+	philo_index = -1;
 	while ((proc_pid = waitpid(-1, &status, 0)) > 0)
 	{
 		if (WIFEXITED(status))
 		{
 			code = WEXITSTATUS(status);
 			if (code == 3)
-				philo_death_handler(philo, proc_pid);
+				find_dead_philo(proc_pid, philo, &philo_index, &flag);
 		}
 	}
-
+	if (philo_index != -1)
+		printf("%lld %d died\n", get_timestamp_in_ms(philo[philo_index].start_time), philo[philo_index].philo_id);
 }
 
-static void	philo_death_handler(t_philo *philo, int proc_pid)
+static void	find_dead_philo(int proc_pid, t_philo *philo, int *philo_index, int *flag)
 {
 	int	i;
 
 	i = -1;
-	while (++i < (philo[0].num_of_philo - 1))
+	while (++i < philo[0].num_of_philo)
 	{
-		if (philo[i].philo_pid != proc_pid)
-			kill(philo[i].philo_pid, SIGTERM);
+		if ((philo[i].philo_pid == proc_pid) && (*flag == 0))
+		{
+			*flag = 1;
+			*philo_index = i;
+		}
 	}
 }

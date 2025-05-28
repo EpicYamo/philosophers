@@ -66,7 +66,8 @@ void	print_message(t_philo *philo, char *message)
 
 	sem_wait(philo->s_print);
 	timestamp = get_timestamp_in_ms(philo->start_time);
-	printf("%lld %d %s\n", timestamp, philo->philo_id, message);
+	if (check_sim(philo))
+		printf("%lld %d %s\n", timestamp, philo->philo_id, message);
 	sem_post(philo->s_print);
 }
 
@@ -75,18 +76,15 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 	long long	start_time;
 
 	start_time = get_timestamp_in_ms(philo->start_time);
-	while (1)
+	while (check_sim(philo))
 	{
 		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
 			break;
 		usleep(500);
-		if ((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time) >= philo->to_die)
+		if (((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time) >= philo->to_die) && (philo->done_eating == 0))
 		{
-			sem_wait(philo->s_print);
-			printf("%lld %d died\n", get_timestamp_in_ms(philo->start_time), philo->philo_id);
-			sem_close(philo->s_fork);
-			sem_close(philo->s_print);
-			exit(3);
+			end_sim_func(philo);
+			philo->dead_flag = 1;
 		}
 	}
 }

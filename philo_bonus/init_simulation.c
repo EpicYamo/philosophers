@@ -19,6 +19,7 @@
 
 static void	init_fork_semaphore(t_philo *philo, int philo_c);
 static void	init_print_semaphore(t_philo *philo, int philo_c);
+static void	init_death_semaphore(t_philo *philo, int philo_c);
 
 void	init_simulation(t_philo *philo, int philo_c)
 {
@@ -27,25 +28,24 @@ void	init_simulation(t_philo *philo, int philo_c)
 
 	sem_unlink("/print_semaphore");
 	sem_unlink("/fork_semaphore");
+	sem_unlink("/death_semaphore");
 	init_fork_semaphore(philo, philo_c);
 	init_print_semaphore(philo, philo_c);
-	i = 0;
-	while (i < philo_c)
+	init_death_semaphore(philo, philo_c);
+	i = -1;
+	while (++i < philo_c)
 	{
 		proc_pid = fork();
 		if (proc_pid < 0)
 		{
-			printf("Fork Failed\n");
-			while (i)
-				kill(philo[--i].philo_pid, SIGTERM);
-			cleanup_resources(philo);
-			exit(EXIT_FAILURE);
+			end_sim_func(&philo[0]);
+			printf("Fork Function Failed Ending The Simulation\n");
+			break;
 		}
 		else if (proc_pid == 0)
 			philo_routine(&philo[i]);
 		else
 			philo[i].philo_pid = proc_pid;
-		i++;
 	}	
 }
 
@@ -83,4 +83,25 @@ static void	init_print_semaphore(t_philo *philo, int philo_c)
 	i = -1;
 	while (++i < philo_c)
 		philo[i].s_print = printf_semaphore;
+}
+
+static void	init_death_semaphore(t_philo *philo, int philo_c)
+{
+	sem_t	*death_semaphore;
+	int		i;
+
+	death_semaphore = sem_open("/death_semaphore", O_CREAT | O_EXCL, 0644, 0);
+	if (death_semaphore == SEM_FAILED)
+	{
+		printf("death semaphore init failed\n");
+		sem_close(philo[0].s_fork);
+		sem_close(philo[0].s_print);
+		sem_unlink("/fork_semaphore");
+		sem_unlink("/print_semaphore");
+		free(philo);
+		exit(EXIT_FAILURE);
+	}
+	i = -1;
+	while (++i < philo_c)
+		philo[i].s_death = death_semaphore;
 }

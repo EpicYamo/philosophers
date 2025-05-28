@@ -15,6 +15,7 @@
 
 # include <semaphore.h>
 # include <sys/time.h>
+# include <pthread.h>
 
 typedef struct s_philosopher
 {
@@ -22,6 +23,8 @@ typedef struct s_philosopher
 	int				current_meals;
 	int				done_eating;
 	long long		last_meal_time;
+	int				sim_flag;
+	int				dead_flag;
 	struct timeval	start_time;
 	pid_t			philo_pid;
 	int				num_of_philo;
@@ -31,6 +34,8 @@ typedef struct s_philosopher
 	int				required_meals;
 	sem_t			*s_fork;
 	sem_t			*s_print;
+	sem_t			*s_death;
+	pthread_t		end_sim_mon;
 }t_philo;
 
 void		check_arguments(int argc, char **argv);
@@ -42,5 +47,7 @@ void		*philo_routine(t_philo *philo);
 void		print_message(t_philo *philo, char *message);
 void		smart_sleep(long long time_in_ms, t_philo *philo);
 void		cleanup_resources(t_philo *philo);
+void		end_sim_func(t_philo *philo);
+int			check_sim(t_philo *philo);
 
 #endif

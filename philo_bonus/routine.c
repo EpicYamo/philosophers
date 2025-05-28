@@ -13,19 +13,47 @@
 #include "philosophers.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 static void	eat_philosopher(t_philo *philo);
-static void alone_philosopher(t_philo *philo);
+static void	alone_philosopher(t_philo *philo);
+static void	*end_sim_monitor(void *philosopher);
+static void	philo_loop(t_philo *philo);
 
 void	*philo_routine(t_philo *philo)
 {
 	if (philo->num_of_philo == 1)
 		alone_philosopher(philo);
+	if (pthread_create(&philo->end_sim_mon, NULL, &end_sim_monitor, philo) != 0)
+	{
+		printf("Thread Creation at Philo: %d Failed Endin the Simulation", philo->philo_id);
+		end_sim_func(philo);
+	}
 	if (philo->philo_id % 2 == 1)
-		smart_sleep(70, philo);
-	while (1)
+		smart_sleep(1, philo);
+	philo_loop(philo);
+	if (philo->done_eating == 1)
+	{
+		smart_sleep((philo->to_eat * 2), philo);
+		sem_post(philo->s_death);
+	}
+	pthread_join(philo->end_sim_mon, NULL);
+	sem_close(philo->s_death);
+	sem_close(philo->s_fork);
+	sem_close(philo->s_print);
+	if (philo->dead_flag == 1)
+		exit(3);
+	else
+		exit(EXIT_SUCCESS);
+}
+
+static void	philo_loop(t_philo *philo)
+{
+	while (check_sim(philo))
 	{
 		eat_philosopher(philo);
+		if (philo->done_eating == 1)
+			break;
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
 		print_message(philo, "is thinking");
@@ -50,16 +78,20 @@ static void	eat_philosopher(t_philo *philo)
 		philo->done_eating = 1;
 	sem_post(philo->s_fork);
 	sem_post(philo->s_fork);
-	if (philo->done_eating == 1)
-	{
-		sem_close(philo->s_fork);
-		sem_close(philo->s_print);
-		exit(2);
-	}
 }
 
 static void alone_philosopher(t_philo *philo)
 {
 	print_message(philo, "has taken a fork");
 	smart_sleep(philo->to_die, philo);
+}
+
+static void	*end_sim_monitor(void *philosopher)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)philosopher;
+	sem_wait(philo->s_death);
+	philo->sim_flag = 0;
+	return (NULL);
 }
