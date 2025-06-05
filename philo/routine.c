@@ -21,6 +21,8 @@ void	*philo_routine(void *philosopher)
 	t_philo		*philo;
 
 	philo = (t_philo *)philosopher;
+	pthread_mutex_lock(philo->sim_mutex);
+	pthread_mutex_unlock(philo->sim_mutex);
 	if (philo->philo_id % 2 == 1)
 		usleep(100);
 	while (check_sim(philo))

@@ -51,6 +51,7 @@ static long long	create_threads(t_philo *philosophers, int philo_count, pthread_
 	int	i;
 
 	i = -1;
+	pthread_mutex_lock(philosophers[0].sim_mutex);
 	while (++i < philo_count)
 	{
 		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine, &philosophers[i]) != 0)
@@ -58,6 +59,7 @@ static long long	create_threads(t_philo *philosophers, int philo_count, pthread_
 	}
 	if (pthread_create(t_death_monitor, NULL, &death_monitor, philosophers) != 0)
 		return (LLONG_MAX - 42);
+	pthread_mutex_unlock(philosophers[0].sim_mutex);
 	return (LLONG_MAX);
 }
 
@@ -84,7 +86,6 @@ static long long	thread_create_error_handler(t_philo *philosophers, long long er
 	int	i;
 
 	i = -1;
-	pthread_mutex_lock(philosophers[0].sim_mutex);
 	*(philosophers[0].sim_flag) = 0;
 	pthread_mutex_unlock(philosophers[0].sim_mutex);
 	if (error_code != LLONG_MAX - 42)

@@ -22,6 +22,8 @@ void	*death_monitor(void *philosophers)
 	int		i;
 
 	philo = (t_philo *)philosophers;
+	pthread_mutex_lock(philo[0].sim_mutex);
+	pthread_mutex_unlock(philo[0].sim_mutex);
 	while (check_sim(philo))
 	{
 		i = -1;

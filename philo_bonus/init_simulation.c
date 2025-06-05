@@ -32,6 +32,7 @@ void	init_simulation(t_philo *philo, int philo_c)
 	init_fork_semaphore(philo, philo_c);
 	init_print_semaphore(philo, philo_c);
 	init_death_semaphore(philo, philo_c);
+	sem_wait(philo->s_print);
 	i = -1;
 	while (++i < philo_c)
 	{
@@ -39,14 +40,17 @@ void	init_simulation(t_philo *philo, int philo_c)
 		if (proc_pid < 0)
 		{
 			end_sim_func(&philo[0]);
+			usleep(5000);
 			printf("Fork Function Failed Ending The Simulation\n");
+			sem_post(philo->s_print);
 			break;
 		}
 		else if (proc_pid == 0)
 			philo_routine(&philo[i]);
 		else
 			philo[i].philo_pid = proc_pid;
-	}	
+	}
+	sem_post(philo->s_print);
 }
 
 static void	init_fork_semaphore(t_philo *philo, int philo_c)

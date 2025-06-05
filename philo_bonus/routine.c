@@ -32,6 +32,8 @@ void	*philo_routine(t_philo *philo)
 		philo->sim_flag = 0;
 		thread_creation = 0;
 	}
+	sem_wait(philo->s_print);
+	sem_post(philo->s_print);
 	philo_loop(philo);
 	if (philo->done_eating == 1)
 	{
