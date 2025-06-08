@@ -27,8 +27,9 @@ void	*philo_routine(t_philo *philo)
 	thread_creation = 1;
 	if (pthread_create(&philo->end_sim_mon, NULL, &end_sim_monitor, philo) != 0)
 	{
-		printf("Thread Creation at Philo: %d Failed Ending the Simulation\n", philo->philo_id);
 		end_sim_func(philo);
+		usleep(5000);
+		printf("Thread Creation at Philo: %d Failed Ending the Simulation\n", philo->philo_id);
 		philo->sim_flag = 0;
 		thread_creation = 0;
 	}
