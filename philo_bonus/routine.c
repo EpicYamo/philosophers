@@ -31,19 +31,13 @@ void	*philo_routine(t_philo *philo)
 	if (pthread_create(&philo->end_sim_mon, NULL, &end_sim_monitor, philo) != 0)
 	{
 		end_sim_func(philo);
-		usleep(5000);
 		printf("Thread Creation at Philo: %d Failed Ending the Simulation\n", philo->philo_id);
 		philo->sim_flag = 0;
 		thread_creation = 0;
 	}
 	sem_post(philo->s_print);
-	usleep(500);
+	smart_sleep(1, philo);
 	philo_loop(philo);
-	if (philo->done_eating == 1)
-	{
-		smart_sleep((philo->to_eat * 2), philo);
-		sem_post(philo->s_death);
-	}
 	if (thread_creation == 1)
 		pthread_join(philo->end_sim_mon, NULL);
 	sem_close(philo->s_death);
@@ -76,7 +70,12 @@ static void	philo_loop(t_philo *philo)
 			else
 				smart_sleep((philo->to_eat - philo->to_sleep), philo);
 		}
-	}	
+	}
+	if (philo->done_eating == 1)
+	{
+		smart_sleep((philo->to_eat * 2), philo);
+		sem_post(philo->s_death);
+	}
 }
 
 static void	eat_philosopher(t_philo *philo)

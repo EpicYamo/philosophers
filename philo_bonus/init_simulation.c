@@ -40,7 +40,6 @@ void	init_simulation(t_philo *philo, int philo_c)
 		if (proc_pid < 0)
 		{
 			end_sim_func(&philo[0]);
-			usleep(5000);
 			printf("Fork Function Failed Ending The Simulation\n");
 			sem_post(philo->s_print);
 			break;
