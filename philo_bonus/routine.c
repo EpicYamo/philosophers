@@ -25,6 +25,9 @@ void	*philo_routine(t_philo *philo)
 	int	thread_creation;
 
 	thread_creation = 1;
+	sem_wait(philo->s_print);
+	sem_post(philo->s_print);
+	sem_wait(philo->s_print);
 	if (pthread_create(&philo->end_sim_mon, NULL, &end_sim_monitor, philo) != 0)
 	{
 		end_sim_func(philo);
@@ -33,8 +36,8 @@ void	*philo_routine(t_philo *philo)
 		philo->sim_flag = 0;
 		thread_creation = 0;
 	}
-	sem_wait(philo->s_print);
 	sem_post(philo->s_print);
+	usleep(500);
 	philo_loop(philo);
 	if (philo->done_eating == 1)
 	{
