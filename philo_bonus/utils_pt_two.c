@@ -15,21 +15,16 @@
 
 void	cleanup_resources(t_philo *philo)
 {
-	if (philo[0].s_fork)
-	{
-		sem_close(philo[0].s_fork);
-		sem_unlink("/fork_semaphore");
-	}
-	if (philo[0].s_print)
-	{
-		sem_close(philo[0].s_print);
-		sem_unlink("/print_semaphore");
-	}
-	if (philo[0].s_death)
-	{
-		sem_close(philo[0].s_death);
-		sem_unlink("/death_semaphore");
-	}
+	sem_close(philo[0].s_fork);
+	sem_close(philo[0].s_print);
+	sem_close(philo[0].s_death);
+	sem_close(philo[0].ipc_sem_one);
+	sem_close(philo[0].ipc_sem_two);
+	sem_unlink("/fork_semaphore");
+	sem_unlink("/print_semaphore");
+	sem_unlink("/death_semaphore");
+	sem_unlink("/ipc_sem_one");
+	sem_unlink("/ipc_sem_two");
 	free(philo);
 }
 

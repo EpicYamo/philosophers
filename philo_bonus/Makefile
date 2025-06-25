@@ -1,6 +1,5 @@
-SRCS 			= philosophers.c check_arguments.c init_simulation.c routine.c utils_pt_one.c \
-					utils_pt_two.c \
-
+SRCS 			= philosophers.c check_arguments.c init_sim_pt_one.c init_sim_pt_two.c \
+					routine_pt_one.c routine_pt_two.c utils_pt_one.c utils_pt_two.c
 NAME			=	philo_bonus
 CC				=	cc
 CFLAGS			=	-Wall -Wextra -Werror

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_simulation.c                                  :+:      :+:    :+:   */
+/*   init_sim_pt_one.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -110,7 +110,11 @@ static void	init_semaphores(t_philo *philo, int philo_c)
 	sem_unlink("/print_semaphore");
 	sem_unlink("/fork_semaphore");
 	sem_unlink("/death_semaphore");
+	sem_unlink("/ipc_sem_one");
+	sem_unlink("/ipc_sem_two");
 	init_fork_semaphore(philo, philo_c);
 	init_print_semaphore(philo, philo_c);
 	init_death_semaphore(philo, philo_c);
+	init_ipc_semaphore_one(philo, philo_c);
+	init_ipc_semaphore_two(philo, philo_c);
 }
