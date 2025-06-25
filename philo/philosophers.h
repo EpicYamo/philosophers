@@ -43,9 +43,12 @@ long long	init_simulation(t_philo *philosophers, int philo_count);
 int			init_sim_flag(t_philo *philosophers, int philo_count);
 int			init_philo_mutex(t_philo *philosophers, int philo_count);
 int			init_print_mutex(t_philo *philosophers, int philo_count);
-int			fail_free(t_philo *philosophers, int philo_count, long long error_code);
-void		mutex_destroy_func(t_philo *philosophers, int mutex_count, int option);
-void		free_philosophers(t_philo *philosophers, int philo_count, int option);
+int			fail_free(t_philo *philosophers, int philo_count,
+				long long error_code);
+void		mutex_destroy_func(t_philo *philosophers, int mutex_count,
+				int option);
+void		free_philosophers(t_philo *philosophers, int philo_count,
+				int option);
 void		*philo_routine(void *philosopher);
 void		*death_monitor(void *philosophers);
 long long	get_timestamp_in_ms(struct timeval start_time);
