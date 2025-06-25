@@ -1,19 +1,19 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   init_sim_pt_two.c                                             :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/29 21:25:07 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/29 21:25:07 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_sim_pt_two.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:48:09 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 16:53:54 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <stdlib.h>
 
-static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count);
+static void	init_philo_mutex_pt_two(t_philo *philo, int philo_c);
 
 int	init_sim_flag(t_philo *philosophers, int philo_count)
 {
@@ -56,19 +56,19 @@ int	init_philo_mutex(t_philo *philosophers, int philo_count)
 	return (0);
 }
 
-static void	init_philo_mutex_pt_two(t_philo *philosophers, int philo_count)
+static void	init_philo_mutex_pt_two(t_philo *philo, int philo_c)
 {
 	int	i;
 
-	if (philosophers->num_of_philo == 1)
-		philosophers[0].mutex_fork_right = NULL;
+	if (philo->num_of_philo == 1)
+		philo[0].mutex_fork_right = NULL;
 	else
 	{
 		i = 1;
-		philosophers[0].mutex_fork_right = &(philosophers[philo_count - 1].mutex_fork_left);
-		while (i < philo_count)
+		philo[0].mutex_fork_right = &(philo[philo_c - 1].mutex_fork_left);
+		while (i < philo_c)
 		{
-			philosophers[i].mutex_fork_right = &(philosophers[i - 1].mutex_fork_left);
+			philo[i].mutex_fork_right = &(philo[i - 1].mutex_fork_left);
 			i++;
 		}
 	}

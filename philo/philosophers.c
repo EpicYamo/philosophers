@@ -1,25 +1,26 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   philosophers.c                                                :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/18 16:27:55 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/18 16:27:55 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophers.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:48:14 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 16:58:34 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc);
+static void	init_philosophers(t_philo *philosophers, char **argv,
+				int philo_count, int argc);
 static int	alone_philosopher(t_philo *philosophers);
 static void	*alone_routine(void *philosopher);
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_philo			*philosophers;
 	long long		error_code;
@@ -48,7 +49,8 @@ int main(int argc, char **argv)
 	return (0);
 }
 
-static void	init_philosophers(t_philo *philosophers, char **argv, int philo_count, int argc)
+static void	init_philosophers(t_philo *philosophers, char **argv,
+	int philo_count, int argc)
 {
 	int				i;
 	struct timeval	starting_time;
@@ -76,7 +78,8 @@ static void	init_philosophers(t_philo *philosophers, char **argv, int philo_coun
 
 static int	alone_philosopher(t_philo *philosophers)
 {
-	if (pthread_create(&philosophers[0].philo_thread, NULL, &alone_routine, &philosophers[0]) != 0)
+	if (pthread_create(&philosophers[0].philo_thread, NULL, &alone_routine,
+			&philosophers[0]) != 0)
 	{
 		free(philosophers);
 		write(2, "Error\nThread Creation Error\n", 28);
@@ -102,8 +105,9 @@ static void	*alone_routine(void *philosopher)
 	printf("%lld %d %s\n", timestamp, philo[0].philo_id, "has taken a fork");
 	while (1)
 	{
-		if (get_timestamp_in_ms(philo[0].start_time) - timestamp >= philo[0].to_die)
-			break;
+		if (get_timestamp_in_ms(
+				philo[0].start_time) - timestamp >= philo[0].to_die)
+			break ;
 		usleep(500);
 	}
 	timestamp = get_timestamp_in_ms(philo[0].start_time);

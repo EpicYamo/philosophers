@@ -1,28 +1,28 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   routine.c                                                     :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/29 21:28:11 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/29 21:28:11 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:48:23 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:03:40 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
 #include <limits.h>
 
 static void	eat_philosopher(t_philo *philo);
+static void	lock_and_unlock(t_philo *philo);
 
 void	*philo_routine(void *philosopher)
 {
 	t_philo		*philo;
 
 	philo = (t_philo *)philosopher;
-	pthread_mutex_lock(philo->sim_mutex);
-	pthread_mutex_unlock(philo->sim_mutex);
+	lock_and_unlock(philo);
 	if (philo->philo_id % 2 == 1)
 		usleep(100);
 	while (check_sim(philo))
@@ -33,7 +33,7 @@ void	*philo_routine(void *philosopher)
 			pthread_mutex_lock(&philo->m_last_meal_time);
 			philo->last_meal_time = LLONG_MAX;
 			pthread_mutex_unlock(&philo->m_last_meal_time);
-			break;
+			break ;
 		}
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
@@ -68,8 +68,15 @@ static void	eat_philosopher(t_philo *philo)
 	pthread_mutex_unlock(&philo->m_last_meal_time);
 	philo->current_meals++;
 	smart_sleep(philo->to_eat, philo);
-	if ((philo->required_meals != -1) && (philo->current_meals == philo->required_meals))
+	if ((philo->required_meals != -1)
+		&& (philo->current_meals == philo->required_meals))
 		philo->done_eating = 1;
 	pthread_mutex_unlock(&philo->mutex_fork_left);
 	pthread_mutex_unlock(philo->mutex_fork_right);
+}
+
+static void	lock_and_unlock(t_philo *philo)
+{
+	pthread_mutex_lock(philo->sim_mutex);
+	pthread_mutex_unlock(philo->sim_mutex);
 }

@@ -1,14 +1,14 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   utils_pt_three.c                                              :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/05/14 22:08:17 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/05/14 22:08:17 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_pt_three.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:48:35 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:05:55 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
@@ -28,6 +28,7 @@ long long	get_timestamp_in_ms(struct timeval start_time)
 void	print_message(t_philo *philo, char *message)
 {
 	long long	timestamp;
+
 	pthread_mutex_lock(philo->print_mutex);
 	timestamp = get_timestamp_in_ms(philo->start_time);
 	if (check_sim(philo))
@@ -43,7 +44,7 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 	while (check_sim(philo))
 	{
 		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
-			break;
+			break ;
 		usleep(500);
 	}
 }

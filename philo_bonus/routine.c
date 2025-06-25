@@ -1,17 +1,16 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   routine.c                                                     :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/29 21:28:11 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/29 21:28:11 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   routine.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 17:09:04 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:24:58 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -28,7 +27,8 @@ void	*philo_routine(t_philo *philo)
 	if (pthread_create(&philo->end_sim_mon, NULL, &end_sim_monitor, philo) != 0)
 	{
 		end_sim_func(philo);
-		printf("Thread Creation at Philo: %d Failed Ending the Simulation\n", philo->philo_id);
+		printf("Thread Creation at Philo: %d Failed Ending the Simulation\n",
+			philo->philo_id);
 		philo->sim_flag = 0;
 		thread_creation = 0;
 	}
@@ -58,7 +58,7 @@ static void	philo_loop(t_philo *philo)
 		{
 			eat_philosopher(philo);
 			if (philo->done_eating == 1)
-				break;
+				break ;
 			print_message(philo, "is sleeping");
 			smart_sleep(philo->to_sleep, philo);
 			print_message(philo, "is thinking");
@@ -85,13 +85,14 @@ static void	eat_philosopher(t_philo *philo)
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
 	philo->current_meals++;
 	smart_sleep(philo->to_eat, philo);
-	if ((philo->required_meals != -1) && (philo->current_meals == philo->required_meals))
+	if ((philo->required_meals != -1)
+		&& (philo->current_meals == philo->required_meals))
 		philo->done_eating = 1;
 	sem_post(philo->s_fork);
 	sem_post(philo->s_fork);
 }
 
-static void alone_philosopher(t_philo *philo)
+static void	alone_philosopher(t_philo *philo)
 {
 	print_message(philo, "has taken a fork");
 	smart_sleep(philo->to_die, philo);

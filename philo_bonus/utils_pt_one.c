@@ -1,17 +1,16 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   utils_pt_one.c                                                :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/18 16:27:32 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/18 16:27:32 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_pt_one.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 17:09:08 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:25:47 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
-#include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 
@@ -79,9 +78,10 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 	while (check_sim(philo))
 	{
 		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
-			break;
+			break ;
 		usleep(500);
-		if (((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time) >= philo->to_die) && (philo->done_eating == 0))
+		if (((get_timestamp_in_ms(philo->start_time) - philo->last_meal_time)
+				>= philo->to_die) && (philo->done_eating == 0))
 		{
 			end_sim_func(philo);
 			philo->dead_flag = 1;

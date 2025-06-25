@@ -1,22 +1,25 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   init_sim_pt_one.c                                             :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/29 21:21:34 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/29 21:21:34 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_sim_pt_one.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:47:53 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 16:51:49 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <limits.h>
 #include <stdlib.h>
 
-static long long	create_threads(t_philo *philosophers, int philo_count, pthread_t *t_death_monitor);
-static long long	join_threads(t_philo *philosophers, int philo_count, pthread_t *t_death_monitor);
-static long long	thread_create_error_handler(t_philo *philosophers, long long error_code);
+static long long	create_threads(t_philo *philosophers, int philo_count,
+						pthread_t *t_death_monitor);
+static long long	join_threads(t_philo *philosophers, int philo_count,
+						pthread_t *t_death_monitor);
+static long long	thread_create_error_handler(t_philo *philosophers,
+						long long error_code);
 
 long long	init_simulation(t_philo *philosophers, int philo_count)
 {
@@ -46,7 +49,8 @@ long long	init_simulation(t_philo *philosophers, int philo_count)
 	return (error_code);
 }
 
-static long long	create_threads(t_philo *philosophers, int philo_count, pthread_t *t_death_monitor)
+static long long	create_threads(t_philo *philosophers, int philo_count,
+	pthread_t *t_death_monitor)
 {
 	int	i;
 
@@ -54,16 +58,19 @@ static long long	create_threads(t_philo *philosophers, int philo_count, pthread_
 	pthread_mutex_lock(philosophers[0].sim_mutex);
 	while (++i < philo_count)
 	{
-		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine, &philosophers[i]) != 0)
+		if (pthread_create(&philosophers[i].philo_thread, NULL, &philo_routine,
+				&philosophers[i]) != 0)
 			return (i + 1);
 	}
-	if (pthread_create(t_death_monitor, NULL, &death_monitor, philosophers) != 0)
+	if (pthread_create(t_death_monitor, NULL, &death_monitor,
+			philosophers) != 0)
 		return (LLONG_MAX - 42);
 	pthread_mutex_unlock(philosophers[0].sim_mutex);
 	return (LLONG_MAX);
 }
 
-static long long	join_threads(t_philo *philosophers, int philo_count, pthread_t *t_death_monitor)
+static long long	join_threads(t_philo *philosophers, int philo_count,
+	pthread_t *t_death_monitor)
 {
 	int	i;
 
@@ -81,7 +88,8 @@ static long long	join_threads(t_philo *philosophers, int philo_count, pthread_t 
 	return (LLONG_MAX);
 }
 
-static long long	thread_create_error_handler(t_philo *philosophers, long long error_code)
+static long long	thread_create_error_handler(t_philo *philosophers,
+	long long error_code)
 {
 	int	i;
 

@@ -1,37 +1,32 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   init_simulation.c                                             :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/05/27 21:16:05 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/05/27 21:16:05 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_simulation.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 17:08:49 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:22:26 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <signal.h>
 
 static void	init_fork_semaphore(t_philo *philo, int philo_c);
 static void	init_print_semaphore(t_philo *philo, int philo_c);
 static void	init_death_semaphore(t_philo *philo, int philo_c);
+static void	init_semaphores(t_philo *philo, int philo_c);
 
 void	init_simulation(t_philo *philo, int philo_c)
 {
 	int		i;
 	pid_t	proc_pid;
 
-	sem_unlink("/print_semaphore");
-	sem_unlink("/fork_semaphore");
-	sem_unlink("/death_semaphore");
-	init_fork_semaphore(philo, philo_c);
-	init_print_semaphore(philo, philo_c);
-	init_death_semaphore(philo, philo_c);
+	init_semaphores(philo, philo_c);
 	sem_wait(philo->s_print);
 	i = -1;
 	while (++i < philo_c)
@@ -42,7 +37,7 @@ void	init_simulation(t_philo *philo, int philo_c)
 			end_sim_func(&philo[0]);
 			usleep(5000);
 			printf("Fork Function Failed Ending The Simulation\n");
-			break;
+			break ;
 		}
 		else if (proc_pid == 0)
 			philo_routine(&philo[i]);
@@ -57,7 +52,8 @@ static void	init_fork_semaphore(t_philo *philo, int philo_c)
 	sem_t	*fork_semaphore;
 	int		i;
 
-	fork_semaphore = sem_open("/fork_semaphore", O_CREAT | O_EXCL, 0644, philo_c);
+	fork_semaphore = sem_open("/fork_semaphore",
+			O_CREAT | O_EXCL, 0644, philo_c);
 	if (fork_semaphore == SEM_FAILED)
 	{
 		printf("fork semaphore init failed\n");
@@ -107,4 +103,14 @@ static void	init_death_semaphore(t_philo *philo, int philo_c)
 	i = -1;
 	while (++i < philo_c)
 		philo[i].s_death = death_semaphore;
+}
+
+static void	init_semaphores(t_philo *philo, int philo_c)
+{
+	sem_unlink("/print_semaphore");
+	sem_unlink("/fork_semaphore");
+	sem_unlink("/death_semaphore");
+	init_fork_semaphore(philo, philo_c);
+	init_print_semaphore(philo, philo_c);
+	init_death_semaphore(philo, philo_c);
 }

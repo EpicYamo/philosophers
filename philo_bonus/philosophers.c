@@ -1,27 +1,27 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   philo.c                                                :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/18 16:27:55 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/18 16:27:55 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophers.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 17:08:55 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:23:46 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <sys/wait.h>
 #include <stdio.h>
 
 static void	init_philo(t_philo *philo, char **argv, int philo_c, int argc);
 static void	wait_process(t_philo *philo);
-static void	find_dead_philo(int proc_pid, t_philo *philo, int *philo_index, int *flag);
+static void	find_dead_philo(int proc_pid, t_philo *philo, int *philo_index,
+				int *flag);
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_philo	*philo;
 
@@ -78,8 +78,10 @@ static void	wait_process(t_philo *philo)
 
 	flag = 0;
 	philo_index = -1;
-	while ((proc_pid = waitpid(-1, &status, 0)) > 0)
+	proc_pid = waitpid(-1, &status, 0);
+	while (proc_pid > 0)
 	{
+		proc_pid = waitpid(-1, &status, 0);
 		if (WIFEXITED(status))
 		{
 			code = WEXITSTATUS(status);
@@ -88,10 +90,13 @@ static void	wait_process(t_philo *philo)
 		}
 	}
 	if (philo_index != -1)
-		printf("%lld %d died\n", get_timestamp_in_ms(philo[philo_index].start_time), philo[philo_index].philo_id);
+		printf("%lld %d died\n",
+			get_timestamp_in_ms(philo[philo_index].start_time),
+			philo[philo_index].philo_id);
 }
 
-static void	find_dead_philo(int proc_pid, t_philo *philo, int *philo_index, int *flag)
+static void	find_dead_philo(int proc_pid, t_philo *philo,
+	int *philo_index, int *flag)
 {
 	int	i;
 

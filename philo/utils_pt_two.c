@@ -1,21 +1,21 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   utils_pt_two.c                                                :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/29 21:19:06 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/29 21:19:06 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_pt_two.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:48:40 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:05:07 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <stdlib.h>
 
 static void	mutex_destroy_func_pt_two(t_philo *philosophers, int option);
 
-void mutex_destroy_func(t_philo *philosophers, int mutex_count, int option)
+void	mutex_destroy_func(t_philo *philosophers, int mutex_count, int option)
 {
 	int	i;
 	int	compare;

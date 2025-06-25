@@ -1,21 +1,22 @@
-/* ************************************************************************************** */
-/*                                                                                        */
-/*                                                                   :::      ::::::::    */
-/*   utils_pt_one.c                                                :+:      :+:    :+:    */
-/*                                                               +:+ +:+         +:+      */
-/*   By: aaycan <aaycan@student.42kocaeli.com.tr>              +#+  +:+       +#+         */
-/*                                                           +#+#+#+#+#+   +#+            */
-/*   Created: 2025/04/18 16:27:32 by aaycan                       #+#    #+#              */
-/*   Updated: 2025/04/18 16:27:32 by aaycan                      ###   ########.tr        */
-/*                                                                                        */
-/* ************************************************************************************** */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils_pt_one.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 16:48:29 by aaycan            #+#    #+#             */
+/*   Updated: 2025/06/25 17:04:17 by aaycan           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
 
-static void	fail_free_pt_two(t_philo *philosophers, int philo_count, long long error_code);
+static void	fail_free_pt_two(t_philo *philosophers, int philo_count,
+				long long error_code);
 
 void	free_philosophers(t_philo *philosophers, int philo_count, int option)
 {
@@ -49,7 +50,8 @@ int	fail_free(t_philo *philosophers, int philo_count, long long error_code)
 	return (1);
 }
 
-static void	fail_free_pt_two(t_philo *philosophers, int philo_count, long long error_code)
+static void	fail_free_pt_two(t_philo *philosophers, int philo_count,
+	long long error_code)
 {
 	if (error_code == LLONG_MAX - 4)
 	{
