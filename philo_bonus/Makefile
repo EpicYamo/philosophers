@@ -1,20 +1,36 @@
-SRCS 			= philosophers.c check_arguments.c init_sim_pt_one.c init_sim_pt_two.c \
+NAME     := philo_bonus
+CC       := cc
+CFLAGS   := -Wall -Wextra -Werror
+SRC      := philosophers.c check_arguments.c init_sim_pt_one.c init_sim_pt_two.c \
 					routine_pt_one.c routine_pt_two.c utils_pt_one.c utils_pt_two.c
-NAME			=	philo_bonus
-CC				=	cc
-CFLAGS			=	-Wall -Wextra -Werror
-RM				=	rm -rf
+OBJ_DIR  := objects
+OBJ      := $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
+GREEN    := \033[0;32m
+BLUE     := \033[0;34m
+CYAN     := \033[0;36m
+RESET    := \033[0m
+BOLD     := \033[1m
 
 all: $(NAME)
 
-$(NAME): $(SRCS)
-	${CC} ${CFLAGS} -o $(NAME) $(SRCS)
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -p $(OBJ_DIR)
+	@printf "$(CYAN)Compiling:$(RESET) %-20s → $(GREEN)%s$(RESET)\n" "$<" "$@"
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(NAME): $(OBJ)
+	@printf "$(BOLD)Linking...$(RESET)\n"
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@printf "$(GREEN)✔ Build complete: $(NAME)$(RESET)\n"
 
 clean:
-	$(RM) $(NAME)
+	@rm -rf $(OBJ_DIR)
+	@printf "$(BLUE)🧹 Cleaned object files$(RESET)\n"
 
-fclean:	clean
+fclean: clean
+	@rm -f $(NAME)
+	@printf "$(BLUE)🧹 Removed binary $(NAME)$(RESET)\n"
 
-re:		clean all
+re: fclean all
 
-.PHONY:	all clean fclean re
+.PHONY: all clean fclean re
