@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:23 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:03:40 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/06/30 15:51:00 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	*philo_routine(void *philosopher)
 	lock_and_unlock(philo);
 	if (philo->philo_id % 2 == 1)
 		usleep(100);
+	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
 	while (check_sim(philo))
 	{
 		eat_philosopher(philo);
