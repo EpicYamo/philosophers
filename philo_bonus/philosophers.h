@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 17:09:28 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:09:28 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 19:32:48 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ typedef struct s_philosopher
 	sem_t			*ipc_sem_one;
 	sem_t			*ipc_sem_two;
 	pthread_t		end_sim_mon;
-}t_philo;
+}	t_philo;
 
 void		check_arguments(int argc, char **argv);
 void		init_simulation(t_philo *philo, int philo_c);

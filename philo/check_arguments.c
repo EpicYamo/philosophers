@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:46:21 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 16:47:09 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 18:48:58 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,6 @@ static void	error_message_func(int option, int *error_flag)
 	{
 		write(2, "Error\nAll arguments must only contain positive ", 47);
 		write(2, "numbers within the integer limit range. (unsigned)\n", 51);
-	}	
+	}
 	*error_flag = 1;
 }

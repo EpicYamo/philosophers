@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:29 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:04:17 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 19:23:20 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,6 @@ static void	fail_free_pt_two(t_philo *philosophers, int philo_count,
 	{
 		free_philosophers(philosophers, philo_count, 3);
 		write(2, "Error\nMutex Init Failed\n", 24);
-	}
-	else if (error_code == LLONG_MAX - 5)
-	{
-		free_philosophers(philosophers, philo_count, 4);
-		write(2, "Error\nMalloc Error\n", 19);
 	}
 	else if (error_code > 0)
 	{

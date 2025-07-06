@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:35 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:05:55 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 19:08:08 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,20 @@ void	smart_sleep(long long time_in_ms, t_philo *philo)
 		if (get_timestamp_in_ms(philo->start_time) - start_time >= time_in_ms)
 			break ;
 		usleep(500);
+		pthread_mutex_lock(&philo->m_last_meal_time);
+		if (start_time - philo->last_meal_time >= philo->to_die)
+		{
+			pthread_mutex_lock(philo->print_mutex);
+			pthread_mutex_lock(philo->sim_mutex);
+			if (*(philo->sim_flag) == 1)
+			{
+				printf("%lld %d died\n", start_time, philo->philo_id);
+				*(philo->sim_flag) = 0;
+			}
+			pthread_mutex_unlock(philo->sim_mutex);
+			pthread_mutex_unlock(philo->print_mutex);
+		}
+		pthread_mutex_unlock(&philo->m_last_meal_time);
 	}
 }
 

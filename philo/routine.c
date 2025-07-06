@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:23 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/30 15:51:00 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 19:31:59 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,14 @@
 #include <limits.h>
 
 static void	eat_philosopher(t_philo *philo);
-static void	lock_and_unlock(t_philo *philo);
+static void	routine_prep(t_philo *philo);
 
 void	*philo_routine(void *philosopher)
 {
 	t_philo		*philo;
 
 	philo = (t_philo *)philosopher;
-	lock_and_unlock(philo);
-	if (philo->philo_id % 2 == 1)
-		usleep(100);
-	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
+	routine_prep(philo);
 	while (check_sim(philo))
 	{
 		eat_philosopher(philo);
@@ -42,7 +39,7 @@ void	*philo_routine(void *philosopher)
 		if (philo->num_of_philo % 2 == 1)
 			smart_sleep(((philo->to_eat * 2) - philo->to_sleep), philo);
 		else
-			usleep(100);
+			smart_sleep((philo->to_eat - philo->to_sleep), philo);
 	}
 	return (NULL);
 }
@@ -76,8 +73,11 @@ static void	eat_philosopher(t_philo *philo)
 	pthread_mutex_unlock(philo->mutex_fork_right);
 }
 
-static void	lock_and_unlock(t_philo *philo)
+static void	routine_prep(t_philo *philo)
 {
 	pthread_mutex_lock(philo->sim_mutex);
 	pthread_mutex_unlock(philo->sim_mutex);
+	if (philo->philo_id % 2 == 1)
+		usleep(100);
+	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
 }

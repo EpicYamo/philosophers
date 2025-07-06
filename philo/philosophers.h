@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:18 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 16:59:23 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 19:11:16 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ typedef struct s_philosopher
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*sim_mutex;
 	pthread_t		philo_thread;
-}t_philo;
+}	t_philo;
 
 int			ft_atoi_mod(const char *str);
 int			check_arguments(int argc, char **argv);
@@ -50,7 +50,6 @@ void		mutex_destroy_func(t_philo *philosophers, int mutex_count,
 void		free_philosophers(t_philo *philosophers, int philo_count,
 				int option);
 void		*philo_routine(void *philosopher);
-void		*death_monitor(void *philosophers);
 long long	get_timestamp_in_ms(struct timeval start_time);
 void		print_message(t_philo *philo, char *message);
 void		smart_sleep(long long time_in_ms, t_philo *philo);

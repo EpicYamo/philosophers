@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:14 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 16:58:34 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/06 18:49:11 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int argc, char **argv)
 		if (fail_free(philosophers, ft_atoi_mod(argv[1]), error_code) != 0)
 			return (1);
 		free_philosophers(philosophers, ft_atoi_mod(argv[1]), 4);
-	}	
+	}
 	return (0);
 }
 
