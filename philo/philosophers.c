@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:14 by aaycan            #+#    #+#             */
-/*   Updated: 2025/07/07 20:35:48 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/07 21:43:34 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ static void	init_philosophers(t_philo *philosophers, char **argv,
 
 static int	alone_philosopher(t_philo *philosophers)
 {
+	gettimeofday(&philosophers[0].start_time, NULL);
+	philosophers[0].last_meal_time = get_timestamp_in_ms(philosophers[0].start_time);
 	if (pthread_create(&philosophers[0].philo_thread, NULL, &alone_routine,
 			&philosophers[0]) != 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 17:08:55 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:23:46 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/07 21:40:36 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <stdio.h>
 
 static void	init_philo(t_philo *philo, char **argv, int philo_c, int argc);
-static void	init_starting_time_again(t_philo *philo, int philo_c);
 static void	wait_process(void);
 
 int	main(int argc, char **argv)
@@ -33,7 +32,6 @@ int	main(int argc, char **argv)
 	}
 	init_philo(philo, argv, ft_atoi_mod(argv[1]), argc);
 	init_simulation(philo, ft_atoi_mod(argv[1]));
-	init_starting_time_again(philo, ft_atoi_mod(argv[1]));
 	wait_process();
 	cleanup_resources(philo);
 	exit(EXIT_SUCCESS);
@@ -76,13 +74,4 @@ static void	wait_process(void)
 	proc_pid = waitpid(-1, &status, 0);
 	while (proc_pid > 0)
 		proc_pid = waitpid(-1, &status, 0);
-}
-
-static void	init_starting_time_again(t_philo *philo, int philo_c)
-{
-	int	i;
-
-	i = -1;
-	while (++i < philo_c)
-		gettimeofday(&philo[i].start_time, NULL);
 }
