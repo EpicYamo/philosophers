@@ -82,7 +82,7 @@ static void	error_message_func(int option)
 		write(2, "of_philosophers time_to_die time_to_eat time_to_sleep", 53);
 		write(2, " (optional)number_of_times_each_philosopher_must_eat\n", 53);
 	}
-	if ((option == 1))
+	if (option == 1)
 	{
 		write(2, "Error\nAll arguments must only contain positive ", 47);
 		write(2, "numbers within the integer limit range. (unsigned)\n", 51);

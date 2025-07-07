@@ -27,12 +27,7 @@ void	*philo_routine(void *philosopher)
 	{
 		eat_philosopher(philo);
 		if (philo->done_eating == 1)
-		{
-			pthread_mutex_lock(&philo->m_last_meal_time);
-			philo->last_meal_time = LLONG_MAX;
-			pthread_mutex_unlock(&philo->m_last_meal_time);
 			break ;
-		}
 		print_message(philo, "is sleeping");
 		smart_sleep(philo->to_sleep, philo);
 		print_message(philo, "is thinking");
@@ -61,9 +56,7 @@ static void	eat_philosopher(t_philo *philo)
 		print_message(philo, "has taken a fork");
 	}
 	print_message(philo, "is eating");
-	pthread_mutex_lock(&philo->m_last_meal_time);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
-	pthread_mutex_unlock(&philo->m_last_meal_time);
 	philo->current_meals++;
 	smart_sleep(philo->to_eat, philo);
 	if ((philo->required_meals != -1)
@@ -79,5 +72,6 @@ static void	routine_prep(t_philo *philo)
 	pthread_mutex_unlock(philo->sim_mutex);
 	if (philo->philo_id % 2 == 1)
 		usleep(100);
+	gettimeofday(&philo->start_time, NULL);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
 }

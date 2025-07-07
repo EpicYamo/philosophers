@@ -43,15 +43,6 @@ int	init_philo_mutex(t_philo *philosophers, int philo_count)
 			return (1);
 		}
 	}
-	i = -1;
-	while (++i < philo_count)
-	{
-		if (pthread_mutex_init(&philosophers[i].m_last_meal_time, NULL) != 0)
-		{
-			mutex_destroy_func(philosophers, i - 1, 2);
-			return (1);
-		}
-	}
 	init_philo_mutex_pt_two(philosophers, philo_count);
 	return (0);
 }

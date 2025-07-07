@@ -30,7 +30,6 @@ typedef struct s_philosopher
 	struct timeval	start_time;
 	int				*sim_flag;
 	pthread_mutex_t	mutex_fork_left;
-	pthread_mutex_t	m_last_meal_time;
 	pthread_mutex_t	*mutex_fork_right;
 	pthread_mutex_t	*print_mutex;
 	pthread_mutex_t	*sim_mutex;

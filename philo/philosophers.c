@@ -52,11 +52,9 @@ int	main(int argc, char **argv)
 static void	init_philosophers(t_philo *philosophers, char **argv,
 	int philo_count, int argc)
 {
-	int				i;
-	struct timeval	starting_time;
+	int	i;
 
 	i = 0;
-	gettimeofday(&starting_time, NULL);
 	while (i < philo_count)
 	{
 		philosophers[i].philo_id = i + 1;
@@ -67,7 +65,6 @@ static void	init_philosophers(t_philo *philosophers, char **argv,
 		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
 		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);
 		philosophers[i].last_meal_time = 0;
-		philosophers[i].start_time = starting_time;
 		if (argc == 6)
 			philosophers[i].required_meals = ft_atoi_mod(argv[5]);
 		else

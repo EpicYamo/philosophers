@@ -28,6 +28,7 @@ void	*philo_routine(t_philo *philo)
 	if (get_timestamp_in_ms(philo->start_time) - current_ms >= 50)
 		philo->sim_flag = 0;
 	philo_prep(philo, &thread_creation);
+	gettimeofday(&philo->start_time, NULL);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
 	philo_loop(philo);
 	if (thread_creation == 1)
