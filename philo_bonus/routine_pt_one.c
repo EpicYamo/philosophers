@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 17:09:04 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:24:58 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/07 21:27:35 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@ void	*philo_routine(t_philo *philo)
 	philo_prep(philo, &thread_creation);
 	gettimeofday(&philo->start_time, NULL);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
+	if (philo->philo_id % 2 == 0)
+		smart_sleep(10, philo);
+	if ((philo->num_of_philo % 2 == 1) && (philo->philo_id == philo->num_of_philo))
+		smart_sleep(((philo->to_eat * 3) - philo->to_sleep), philo);
 	philo_loop(philo);
 	if (thread_creation == 1)
 		pthread_join(philo->end_sim_mon, NULL);

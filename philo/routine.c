@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:23 by aaycan            #+#    #+#             */
-/*   Updated: 2025/07/06 19:31:59 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/07 21:26:22 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	*philo_routine(void *philosopher)
 
 static void	eat_philosopher(t_philo *philo)
 {
-	if (philo->philo_id % 2 == 0)
+	if (philo->philo_id % 2 == 1)
 	{
 		pthread_mutex_lock(&philo->mutex_fork_left);
 		print_message(philo, "has taken a fork");
@@ -70,8 +70,11 @@ static void	routine_prep(t_philo *philo)
 {
 	pthread_mutex_lock(philo->sim_mutex);
 	pthread_mutex_unlock(philo->sim_mutex);
-	if (philo->philo_id % 2 == 1)
-		usleep(100);
 	gettimeofday(&philo->start_time, NULL);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
+	if (philo->philo_id % 2 == 0)
+		smart_sleep(10, philo);
+	if ((philo->num_of_philo % 2 == 1)
+		&& (philo->philo_id == philo->num_of_philo))
+		smart_sleep(((philo->to_eat * 3) - philo->to_sleep), philo);
 }
