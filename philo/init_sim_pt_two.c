@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:09 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 16:53:54 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/15 15:38:22 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,11 @@ static void	init_philo_mutex_pt_two(t_philo *philo, int philo_c)
 {
 	int	i;
 
-	if (philo->num_of_philo == 1)
-		philo[0].mutex_fork_right = NULL;
-	else
+	i = 1;
+	philo[0].mutex_fork_right = &(philo[philo_c - 1].mutex_fork_left);
+	while (i < philo_c)
 	{
-		i = 1;
-		philo[0].mutex_fork_right = &(philo[philo_c - 1].mutex_fork_left);
-		while (i < philo_c)
-		{
-			philo[i].mutex_fork_right = &(philo[i - 1].mutex_fork_left);
-			i++;
-		}
+		philo[i].mutex_fork_right = &(philo[i - 1].mutex_fork_left);
+		i++;
 	}
 }

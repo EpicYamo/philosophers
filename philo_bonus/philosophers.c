@@ -14,7 +14,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include <stdio.h>
 
 static void	init_philo(t_philo *philo, char **argv, int philo_c, int argc);
 static void	wait_process(void);
@@ -55,7 +54,7 @@ static void	init_philo(t_philo *philo, char **argv, int philo_c, int argc)
 		philo[i].to_die = ft_atoi_mod(argv[2]);
 		philo[i].to_eat = ft_atoi_mod(argv[3]);
 		philo[i].to_sleep = ft_atoi_mod(argv[4]);
-		philo[i].last_meal_time = 0;
+		philo[i].last_meal_time = get_timestamp_in_ms(starting_time);
 		philo[i].sim_flag = 1;
 		philo[i].start_time = starting_time;
 		if (argc == 6)

@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "philosophers.h"
-#include <unistd.h>
-#include <limits.h>
 
 static void	eat_philosopher(t_philo *philo);
 static void	routine_prep(t_philo *philo);
@@ -70,11 +68,7 @@ static void	routine_prep(t_philo *philo)
 {
 	pthread_mutex_lock(philo->sim_mutex);
 	pthread_mutex_unlock(philo->sim_mutex);
-	gettimeofday(&philo->start_time, NULL);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
-	if (philo->philo_id % 2 == 0)
+	if (philo->philo_id % 2 == 1)
 		smart_sleep(10, philo);
-	if ((philo->num_of_philo % 2 == 1)
-		&& (philo->philo_id == philo->num_of_philo))
-		smart_sleep(((philo->to_eat * 3) - philo->to_sleep), philo);
 }

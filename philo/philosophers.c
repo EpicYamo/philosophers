@@ -52,19 +52,22 @@ int	main(int argc, char **argv)
 static void	init_philosophers(t_philo *philosophers, char **argv,
 	int philo_count, int argc)
 {
-	int	i;
+	int				i;
+	struct timeval	curr_time;
 
+	gettimeofday(&curr_time, NULL);
 	i = 0;
 	while (i < philo_count)
 	{
 		philosophers[i].philo_id = i + 1;
 		philosophers[i].current_meals = 0;
 		philosophers[i].done_eating = 0;
+		philosophers[i].last_meal_time = get_timestamp_in_ms(curr_time);
 		philosophers[i].num_of_philo = philo_count;
 		philosophers[i].to_die = ft_atoi_mod(argv[2]);
 		philosophers[i].to_eat = ft_atoi_mod(argv[3]);
 		philosophers[i].to_sleep = ft_atoi_mod(argv[4]);
-		philosophers[i].last_meal_time = 0;
+		philosophers[i].start_time = curr_time;
 		if (argc == 6)
 			philosophers[i].required_meals = ft_atoi_mod(argv[5]);
 		else
@@ -75,8 +78,6 @@ static void	init_philosophers(t_philo *philosophers, char **argv,
 
 static int	alone_philosopher(t_philo *philosophers)
 {
-	gettimeofday(&philosophers[0].start_time, NULL);
-	philosophers[0].last_meal_time = get_timestamp_in_ms(philosophers[0].start_time);
 	if (pthread_create(&philosophers[0].philo_thread, NULL, &alone_routine,
 			&philosophers[0]) != 0)
 	{

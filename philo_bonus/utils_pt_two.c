@@ -20,11 +20,13 @@ void	cleanup_resources(t_philo *philo)
 	sem_close(philo[0].s_death);
 	sem_close(philo[0].ipc_sem_one);
 	sem_close(philo[0].ipc_sem_two);
+	sem_close(philo[0].ipc_sem_three);
 	sem_unlink("/fork_semaphore");
 	sem_unlink("/print_semaphore");
 	sem_unlink("/death_semaphore");
 	sem_unlink("/ipc_sem_one");
 	sem_unlink("/ipc_sem_two");
+	sem_unlink("/ipc_sem_three");
 	free(philo);
 }
 

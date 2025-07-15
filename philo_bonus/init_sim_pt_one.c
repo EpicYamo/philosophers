@@ -27,7 +27,7 @@ void	init_simulation(t_philo *philo, int philo_c)
 	pid_t	proc_pid;
 
 	init_semaphores(philo, philo_c);
-	sem_wait(philo->s_print);
+	sem_wait(philo->ipc_sem_three);
 	i = -1;
 	while (++i < philo_c)
 	{
@@ -44,7 +44,7 @@ void	init_simulation(t_philo *philo, int philo_c)
 		else
 			philo[i].philo_pid = proc_pid;
 	}
-	sem_post(philo->s_print);
+	sem_post(philo->ipc_sem_three);
 }
 
 static void	init_fork_semaphore(t_philo *philo, int philo_c)
@@ -112,9 +112,11 @@ static void	init_semaphores(t_philo *philo, int philo_c)
 	sem_unlink("/death_semaphore");
 	sem_unlink("/ipc_sem_one");
 	sem_unlink("/ipc_sem_two");
+	sem_unlink("/ipc_sem_three");
 	init_fork_semaphore(philo, philo_c);
 	init_print_semaphore(philo, philo_c);
 	init_death_semaphore(philo, philo_c);
 	init_ipc_semaphore_one(philo, philo_c);
 	init_ipc_semaphore_two(philo, philo_c);
+	init_ipc_semaphore_three(philo, philo_c);
 }

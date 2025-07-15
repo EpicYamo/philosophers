@@ -12,7 +12,6 @@
 
 #include "philosophers.h"
 #include <limits.h>
-#include <stdlib.h>
 
 static long long	create_threads(t_philo *philosophers, int philo_count);
 static long long	join_threads(t_philo *philosophers, int philo_count);

@@ -62,3 +62,30 @@ void	init_ipc_semaphore_two(t_philo *philo, int philo_c)
 	while (++i < philo_c)
 		philo[i].ipc_sem_two = ipc_semaphore_two;
 }
+
+void	init_ipc_semaphore_three(t_philo *philo, int philo_c)
+{
+	sem_t	*ipc_semaphore_three;
+	int		i;
+
+	ipc_semaphore_three = sem_open("/ipc_sem_three", O_CREAT | O_EXCL, 0644, 1);
+	if (ipc_semaphore_three == SEM_FAILED)
+	{
+		printf("ipc_sem_three init failed\n");
+		sem_close(philo[0].s_fork);
+		sem_close(philo[0].s_print);
+		sem_close(philo[0].s_death);
+		sem_close(philo[0].ipc_sem_one);
+		sem_close(philo[0].ipc_sem_two);
+		sem_unlink("/fork_semaphore");
+		sem_unlink("/print_semaphore");
+		sem_unlink("/death_semaphore");
+		sem_unlink("/ipc_sem_one");
+		sem_unlink("/ipc_sem_two");
+		free(philo);
+		exit(EXIT_FAILURE);
+	}
+	i = -1;
+	while (++i < philo_c)
+		philo[i].ipc_sem_three = ipc_semaphore_three;
+}

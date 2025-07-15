@@ -17,6 +17,7 @@
 
 static void	philo_prep(t_philo *philo, int *thread_creation);
 static void	philo_loop(t_philo *philo);
+static void	close_semaphores(t_philo *philo);
 
 void	*philo_routine(t_philo *philo)
 {
@@ -28,20 +29,16 @@ void	*philo_routine(t_philo *philo)
 	if (get_timestamp_in_ms(philo->start_time) - current_ms >= 50)
 		philo->sim_flag = 0;
 	philo_prep(philo, &thread_creation);
-	gettimeofday(&philo->start_time, NULL);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
-	if (philo->philo_id % 2 == 0)
-		smart_sleep(10, philo);
-	if ((philo->num_of_philo % 2 == 1) && (philo->philo_id == philo->num_of_philo))
-		smart_sleep(((philo->to_eat * 3) - philo->to_sleep), philo);
+	if (philo->philo_id % 2 == 1)
+		smart_sleep((philo->to_eat), philo);
+	if ((philo->philo_id % 2 == 1) && (philo->philo_id == philo->num_of_philo)
+		&& (philo->num_of_philo > 1))
+		smart_sleep((philo->to_eat), philo);
 	philo_loop(philo);
 	if (thread_creation == 1)
 		pthread_join(philo->end_sim_mon, NULL);
-	sem_close(philo->s_death);
-	sem_close(philo->s_fork);
-	sem_close(philo->s_print);
-	sem_close(philo->ipc_sem_one);
-	sem_close(philo->ipc_sem_two);
+	close_semaphores(philo);
 	if (philo->dead_flag == 1)
 		exit(3);
 	else
@@ -73,14 +70,12 @@ static void	philo_prep(t_philo *philo, int *thread_creation)
 	}
 	sem_wait(philo->ipc_sem_one);
 	smart_sleep(5, philo);
-	sem_wait(philo->s_print);
-	sem_post(philo->s_print);
+	sem_wait(philo->ipc_sem_three);
+	sem_post(philo->ipc_sem_three);
 }
 
 static void	philo_loop(t_philo *philo)
 {
-	if (philo->philo_id % 2 == 1)
-		smart_sleep(1, philo);
 	if (philo->num_of_philo == 1)
 		alone_philosopher(philo);
 	else
@@ -97,11 +92,22 @@ static void	philo_loop(t_philo *philo)
 				smart_sleep(((philo->to_eat * 2) - philo->to_sleep), philo);
 			else
 				smart_sleep((philo->to_eat - philo->to_sleep), philo);
+			usleep(100);
 		}
 	}
 	if (philo->done_eating == 1)
 	{
-		smart_sleep((philo->to_eat * 2), philo);
+		smart_sleep((philo->to_eat * 3), philo);
 		sem_post(philo->s_death);
 	}
+}
+
+static void	close_semaphores(t_philo *philo)
+{
+	sem_close(philo->s_death);
+	sem_close(philo->s_fork);
+	sem_close(philo->s_print);
+	sem_close(philo->ipc_sem_one);
+	sem_close(philo->ipc_sem_two);
+	sem_close(philo->ipc_sem_three);
 }

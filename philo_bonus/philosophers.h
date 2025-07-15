@@ -37,6 +37,7 @@ typedef struct s_philosopher
 	sem_t			*s_death;
 	sem_t			*ipc_sem_one;
 	sem_t			*ipc_sem_two;
+	sem_t			*ipc_sem_three;
 	pthread_t		end_sim_mon;
 }	t_philo;
 
@@ -53,6 +54,7 @@ void		end_sim_func(t_philo *philo);
 int			check_sim(t_philo *philo);
 void		init_ipc_semaphore_one(t_philo *philo, int philo_c);
 void		init_ipc_semaphore_two(t_philo *philo, int philo_c);
+void		init_ipc_semaphore_three(t_philo *philo, int philo_c);
 void		eat_philosopher(t_philo *philo);
 void		alone_philosopher(t_philo *philo);
 void		*end_sim_monitor(void *philosopher);
