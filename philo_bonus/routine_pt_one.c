@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 17:09:04 by aaycan            #+#    #+#             */
-/*   Updated: 2025/07/07 21:27:35 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/15 23:34:48 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,20 @@ static void	philo_prep(t_philo *philo, int *thread_creation);
 static void	philo_loop(t_philo *philo);
 static void	close_semaphores(t_philo *philo);
 
-void	*philo_routine(t_philo *philo)
+void	*philo_routine(t_philo *philo, t_philo *philo_arr)
 {
 	long long	current_ms;
 	int			thread_creation;
+	int			exit_status;
 
+	exit_status = EXIT_SUCCESS;
 	current_ms = get_timestamp_in_ms(philo->start_time);
 	sem_wait(philo->ipc_sem_two);
 	if (get_timestamp_in_ms(philo->start_time) - current_ms >= 50)
 		philo->sim_flag = 0;
 	philo_prep(philo, &thread_creation);
 	philo->last_meal_time = get_timestamp_in_ms(philo->start_time);
-	if (philo->philo_id % 2 == 1)
+	if ((philo->philo_id % 2 == 1) && (philo->num_of_philo != 1))
 		smart_sleep((philo->to_eat), philo);
 	if ((philo->philo_id % 2 == 1) && (philo->philo_id == philo->num_of_philo)
 		&& (philo->num_of_philo > 1))
@@ -40,9 +42,9 @@ void	*philo_routine(t_philo *philo)
 		pthread_join(philo->end_sim_mon, NULL);
 	close_semaphores(philo);
 	if (philo->dead_flag == 1)
-		exit(3);
-	else
-		exit(EXIT_SUCCESS);
+		exit_status = 3;
+	free(philo_arr);
+	exit(exit_status);
 }
 
 static void	philo_prep(t_philo *philo, int *thread_creation)

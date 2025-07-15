@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 17:09:28 by aaycan            #+#    #+#             */
-/*   Updated: 2025/07/06 19:32:48 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/15 23:18:03 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void		init_simulation(t_philo *philo, int philo_c);
 long long	ft_atoll(const char *str);
 int			ft_atoi_mod(const char *str);
 long long	get_timestamp_in_ms(struct timeval start_time);
-void		*philo_routine(t_philo *philo);
+void		*philo_routine(t_philo *philo, t_philo *philo_arr);
 void		print_message(t_philo *philo, char *message);
 void		smart_sleep(long long time_in_ms, t_philo *philo);
 void		cleanup_resources(t_philo *philo);

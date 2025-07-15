@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 17:08:49 by aaycan            #+#    #+#             */
-/*   Updated: 2025/06/25 17:22:26 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/15 23:18:50 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	init_simulation(t_philo *philo, int philo_c)
 			break ;
 		}
 		else if (proc_pid == 0)
-			philo_routine(&philo[i]);
+			philo_routine(&philo[i], philo);
 		else
 			philo[i].philo_pid = proc_pid;
 	}

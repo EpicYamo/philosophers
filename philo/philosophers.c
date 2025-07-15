@@ -6,7 +6,7 @@
 /*   By: aaycan <aaycan@student.42kocaeli.com.tr    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 16:48:14 by aaycan            #+#    #+#             */
-/*   Updated: 2025/07/07 21:43:34 by aaycan           ###   ########.fr       */
+/*   Updated: 2025/07/15 23:15:40 by aaycan           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,11 @@ static void	init_philosophers(t_philo *philosophers, char **argv,
 
 static int	alone_philosopher(t_philo *philosophers)
 {
+	if (pthread_mutex_init(&philosophers[0].mutex_fork_left, NULL) != 0)
+	{
+		write(2, "Error\nMutex Init Failed\n", 24);
+		free(philosophers);
+	}
 	if (pthread_create(&philosophers[0].philo_thread, NULL, &alone_routine,
 			&philosophers[0]) != 0)
 	{
@@ -91,6 +96,7 @@ static int	alone_philosopher(t_philo *philosophers)
 		write(2, "Error\nThread Join Error\n", 24);
 		return (1);
 	}
+	pthread_mutex_destroy(&philosophers[0].mutex_fork_left);
 	free(philosophers);
 	return (0);
 }
@@ -102,6 +108,7 @@ static void	*alone_routine(void *philosopher)
 
 	philo = (t_philo *)philosopher;
 	timestamp = get_timestamp_in_ms(philo[0].start_time);
+	pthread_mutex_lock(&philo->mutex_fork_left);
 	printf("%lld %d %s\n", timestamp, philo[0].philo_id, "has taken a fork");
 	while (1)
 	{
@@ -110,6 +117,7 @@ static void	*alone_routine(void *philosopher)
 			break ;
 		usleep(500);
 	}
+	pthread_mutex_unlock(&philo->mutex_fork_left);
 	timestamp = get_timestamp_in_ms(philo[0].start_time);
 	printf("%lld %d %s\n", timestamp, philo[0].philo_id, "died");
 	return (NULL);
